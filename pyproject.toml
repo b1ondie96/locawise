@@ -8,6 +8,11 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "jproperties (>=2.1.2,<3.0.0)",
+    "pytest (>=8.3.5,<9.0.0)",
+    "pytest-asyncio (>=0.26.0,<0.27.0)",
+    "pytest-mock (>=3.14.0,<4.0.0)",
+    "aiofiles (>=24.1.0,<25.0.0)"
 ]
 
 [tool.poetry]
@@ -17,3 +22,9 @@ packages = [{include = "threepio", from = "src"}]
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_test_loop_scope = "module"
+asyncio_default_fixture_loop_scope = "module"
+
