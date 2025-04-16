@@ -9,7 +9,7 @@ from tests.utils import get_absolute_path
 
 @pytest.mark.asyncio(loop_scope="module")
 async def test_java_properties_with_equals_parsing(expected_dict_for_default_java_properties: dict[str, str]):
-    absolute_path = get_absolute_path("resources/default_with_equals.properties")
+    absolute_path = get_absolute_path("resources/properties/default_with_equals.properties")
     file_content = await read_file(absolute_path)
     properties = await parse_java_properties_file(file_content)
 
@@ -19,7 +19,7 @@ async def test_java_properties_with_equals_parsing(expected_dict_for_default_jav
 
 @pytest.mark.asyncio(loop_scope="module")
 async def test_java_properties_with_colons__parsing(expected_dict_for_default_java_properties: dict[str, str]):
-    absolute_path = get_absolute_path("resources/default_with_colon.properties")
+    absolute_path = get_absolute_path("resources/properties/default_with_colon.properties")
     file_content = await read_file(absolute_path)
     properties = await parse_java_properties_file(file_content)
 
@@ -30,7 +30,7 @@ async def test_java_properties_with_colons__parsing(expected_dict_for_default_ja
 @pytest.mark.asyncio(loop_scope="module")
 async def test_java_properties_with_special_characters_parsing(
         expected_dict_for_special_characters_java_properties: dict[str, str]):
-    absolute_path = get_absolute_path("resources/special_characters.properties")
+    absolute_path = get_absolute_path("resources/properties/special_characters.properties")
     file_content = await read_file(absolute_path)
     properties = await parse_java_properties_file(file_content)
 
@@ -41,7 +41,7 @@ async def test_java_properties_with_special_characters_parsing(
 @pytest.mark.asyncio(loop_scope="module")
 async def test_java_properties_with_multiline_parsing(
         expected_dict_for_multiline_java_properties: dict[str, str]):
-    absolute_path = get_absolute_path("resources/multiline.properties")
+    absolute_path = get_absolute_path("resources/properties/multiline.properties")
     file_content = await read_file(absolute_path)
     properties = await parse_java_properties_file(file_content)
 
