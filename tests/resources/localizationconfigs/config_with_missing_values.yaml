@@ -1,0 +1,9 @@
+# Localization Configuration
+glossary:                   # Optional glossary dictionary
+  key1: value1
+  key2: value2
+source_language: en         # Source language code (required)
+target_languages:           # List of target language codes (required)
+  - fr
+  - es
+  - de

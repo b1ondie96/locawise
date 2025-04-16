@@ -1,0 +1,44 @@
+import logging
+from typing import Self
+
+import yaml
+from pydantic import BaseModel, ValidationError, model_validator
+
+from src.threepio.errors import InvalidYamlConfigError
+from src.threepio.fileutils import read_file
+from src.threepio.langutils import is_valid_two_letter_lang_code
+
+
+class LocalizationConfig(BaseModel):
+    context: str = ''
+    glossary: dict[str, str] = {}
+    tone: str = ''
+    source_language: str = 'en'
+    target_languages: set[str] = {}
+
+    @model_validator(mode='after')
+    def validate_lang_codes(self) -> Self:
+        if not is_valid_two_letter_lang_code(self.source_language):
+            raise ValueError(f'Invalid source language code {self.source_language}')
+
+        for lang_code in self.target_languages:
+            if not is_valid_two_letter_lang_code(lang_code):
+                raise ValueError(f'{lang_code} is not a valid language code')
+
+        return self
+
+
+async def read_localization_config_yaml(file_path: str) -> LocalizationConfig:
+    yaml_content = await read_file(file_path)
+    yaml_dict = yaml.safe_load(yaml_content)
+    if not isinstance(yaml_dict, dict):
+        logging.error(f"Could not convert yaml file to config {yaml_dict}")
+        raise InvalidYamlConfigError("Invalid YAML file")
+
+    try:
+        config = LocalizationConfig(**yaml_dict)
+        return config
+    except ValidationError as e:
+        logging.error(f"Could not convert yaml file to config {yaml_dict} {e}")
+
+        raise InvalidYamlConfigError("Invalid YAML file")
