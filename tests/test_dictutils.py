@@ -1,4 +1,6 @@
-from src.threepio.dictutils import chunk_dict, simple_union
+import pytest
+
+from src.threepio.dictutils import chunk_dict, simple_union, unsafe_subdict
 
 
 def test_chunk_dict_empty_dict():
@@ -48,3 +50,17 @@ def test_simple_union_three_dicts():
     actual = simple_union(d1, d2, d3)
 
     assert actual == {'k1': 'v1', 'k2': 'v2', 'k3': 'v3'}
+
+@pytest.mark.parametrize("original, keys, expected", [
+    ({'a1':'b1','a2':'b2'}, {'a1'}, {'a1':'b1'}),
+    ({'a1':'b1','a2':'b2'}, {'a1', 'a2'}, {'a1':'b1', 'a2':'b2'}),
+    ({'a1':'b1','a2':'b2'}, set(), {}),
+    ({'a1':None,'a2':'b2'}, {'a1'}, {'a1':None}),
+    ({'a1':123,'a2':'b2'}, {'a1'}, {'a1':123}),
+    ({'a1':[1,2,3],'a2':'b2'}, {'a1'}, {'a1':[1,2,3]}),
+    ({'a1':{'nested':'value'},'a2':'b2'}, {'a1'}, {'a1':{'nested':'value'}}),
+])
+def test_subdict(original, keys, expected):
+    result = unsafe_subdict(original, keys)
+    assert result == expected
+
