@@ -1,7 +1,7 @@
 from src.threepio.lockfile import hash_key_value_pair
 
 
-def retrieve_nom_source_keys(key_value_hashes: set[str], source_dict: dict[str, str]):
+def retrieve_nom_source_keys(key_value_hashes: set[str], source_dict: dict[str, str]) -> set[str]:
     "nom stands for new or modified"
     nom_keys = set()
     for k, v in source_dict.items():
@@ -10,3 +10,10 @@ def retrieve_nom_source_keys(key_value_hashes: set[str], source_dict: dict[str, 
             nom_keys.add(k)
 
     return nom_keys
+
+
+def retrieve_keys_to_be_translated(source_dict: dict[str, str],
+                                   target_dict: dict[str, str],
+                                   nom_keys: set[str]) -> set[str]:
+    missing_target_keys = source_dict.keys() - target_dict.keys()
+    return missing_target_keys | nom_keys
