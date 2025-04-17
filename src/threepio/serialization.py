@@ -1,4 +1,4 @@
-from src.threepio.localization_format import LocalizationFormat
+from src.threepio.localization.format import LocalizationFormat
 
 
 def serialize(key_value_map: dict[str, str], localization_format: LocalizationFormat) -> str:

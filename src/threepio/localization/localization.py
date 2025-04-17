@@ -4,7 +4,7 @@ import logging
 from src.threepio.dictutils import chunk_dict, simple_union
 from src.threepio.errors import LLMApiError, InvalidLLMOutputError, LocalizationFailedError
 from src.threepio.llm import LLMContext
-from src.threepio.localization_prompts import generate_system_prompt, generate_user_prompt
+from src.threepio.localization.prompts import generate_system_prompt, generate_user_prompt
 
 
 async def localize(llm_context: LLMContext,

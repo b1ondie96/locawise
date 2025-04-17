@@ -2,7 +2,7 @@ import jproperties
 
 from src.threepio.errors import ParseError
 from src.threepio.fileutils import read_file
-from src.threepio.localization_format import detect_format, LocalizationFormat
+from src.threepio.localization.format import detect_format, LocalizationFormat
 
 
 async def parse(file_path: str):

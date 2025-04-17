@@ -1,4 +1,4 @@
-from src.threepio.localization_format import LocalizationFormat
+from src.threepio.localization.format import LocalizationFormat
 from src.threepio.serialization import serialize_to_properties_format, serialize
 
 
