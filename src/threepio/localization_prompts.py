@@ -1,9 +1,13 @@
-def get_user_prompt(pairs: dict[str, str], target_language: str):
+import json
+
+
+def generate_user_prompt(pairs: dict[str, str], target_language: str):
     return f"""
 Translate the following values to {target_language} according to the criteria you were given.
+Input can contain nested json dictionaries. Translate their values and keep their structure.
 
 Input:
-{pairs}
+{json.dumps(pairs)}
 Target Language:
 {target_language}
 
@@ -12,7 +16,7 @@ Output:
 """
 
 
-def get_system_prompt(context: str, glossary: dict[str, str], tone: str):
+def generate_system_prompt(context: str, glossary: dict[str, str], tone: str):
     context_message = _get_context_message(context)
     glossary_message = _get_glossary_message(glossary)
     tone_message = _get_tone_message(tone)
