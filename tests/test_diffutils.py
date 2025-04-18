@@ -1,6 +1,6 @@
 import pytest
 
-from src.threepio.diffutils import retrieve_nom_source_keys, retrieve_keys_to_be_translated
+from src.threepio.diffutils import retrieve_nom_source_keys, retrieve_keys_to_be_localized
 from src.threepio.lockfile import hash_key_value_pair
 
 
@@ -100,7 +100,7 @@ def test_retrieve_keys_to_be_translated_without_nom_keys(source_dict: set[str], 
     for key in target_dict:
         d2[key] = key
 
-    result = retrieve_keys_to_be_translated(d1, d2, nom_keys=set())
+    result = retrieve_keys_to_be_localized(d1, d2, nom_keys=set())
     assert expected == result
 
 
@@ -123,5 +123,5 @@ def test_retrieve_keys_to_be_translated_with_nom_keys(source_dict: set[str],
     for key in target_dict:
         d2[key] = key
 
-    result = retrieve_keys_to_be_translated(d1, d2, nom_keys=nom_keys)
+    result = retrieve_keys_to_be_localized(d1, d2, nom_keys=nom_keys)
     assert expected == result

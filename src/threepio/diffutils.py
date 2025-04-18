@@ -12,8 +12,8 @@ def retrieve_nom_source_keys(key_value_hashes: set[str], source_dict: dict[str, 
     return nom_keys
 
 
-def retrieve_keys_to_be_translated(source_dict: dict[str, str],
-                                   target_dict: dict[str, str],
-                                   nom_keys: set[str]) -> set[str]:
+def retrieve_keys_to_be_localized(source_dict: dict[str, str],
+                                  target_dict: dict[str, str],
+                                  nom_keys: set[str]) -> set[str]:
     missing_target_keys = source_dict.keys() - target_dict.keys()
     return missing_target_keys | nom_keys

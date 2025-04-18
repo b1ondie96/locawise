@@ -30,7 +30,7 @@ class LLMContext:
 
 class MockLLMStrategy(LLMStrategy):
     def __init__(self):
-        self.regex = r'\{[^}]*\}'
+        self.regex = r'\{(?:[^{}]|(?:\{[^{}]*\}))*\}'
 
     def _extract_pairs_from_prompt(self, prompt: str) -> dict[str, str]:
         input_match = re.search(self.regex, prompt, re.DOTALL)
@@ -43,6 +43,7 @@ class MockLLMStrategy(LLMStrategy):
             pairs = json.loads(pairs_str)
             return {str(k): str(v) for k, v in pairs.items()}
         except json.JSONDecodeError:
+            logging.exception("Json could not be decoded.")
             return {}
 
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:

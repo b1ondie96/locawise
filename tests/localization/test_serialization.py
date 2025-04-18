@@ -36,4 +36,4 @@ def test_serialize_to_properties_format_multiple_pairs():
     }
 
     result = serialize_to_properties_format(input_map)
-    assert result == 'age=19\nmessage=I love world\nlocation=frankfurt  \ndistance=150\npresence=\n'
+    assert result == 'age=19\ndistance=150\nlocation=frankfurt  \nmessage=I love world\npresence=\n'
