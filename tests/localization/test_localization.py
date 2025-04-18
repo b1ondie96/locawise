@@ -1,7 +1,7 @@
 import pytest
 
 from src.threepio import llm
-from src.threepio.errors import LocalizationFailedError
+from src.threepio.errors import LocalizationError
 from src.threepio.llm import LLMContext
 from src.threepio.localization import localize
 
@@ -58,7 +58,7 @@ async def test_localize_with_mock_strategy_and_llm_api_error():
     }
     target_language = 'en'
 
-    with pytest.raises(LocalizationFailedError):
+    with pytest.raises(LocalizationError):
         await localize(context, pairs, target_language, chunk_size=1)
 
 
@@ -77,5 +77,5 @@ async def test_localize_with_mock_strategy_and_invalid_llm_output_error():
     }
     target_language = 'en'
 
-    with pytest.raises(LocalizationFailedError):
+    with pytest.raises(LocalizationError):
         await localize(context, pairs, target_language, chunk_size=2)

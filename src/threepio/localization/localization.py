@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 from src.threepio.dictutils import chunk_dict, simple_union
-from src.threepio.errors import LLMApiError, InvalidLLMOutputError, LocalizationFailedError
+from src.threepio.errors import LLMApiError, InvalidLLMOutputError, LocalizationError
 from src.threepio.llm import LLMContext
 from src.threepio.localization.prompts import generate_system_prompt, generate_user_prompt
 
@@ -29,10 +29,10 @@ async def localize(llm_context: LLMContext,
                 tasks.append(tg.create_task(llm_context.call(system_prompt, user_prompt)))
     except* (LLMApiError, InvalidLLMOutputError) as e:
         logging.warning(f"Translation failed. {e}")
-        raise LocalizationFailedError
+        raise LocalizationError
     except* Exception:
         logging.exception("Unknown error occurred!")
-        raise LocalizationFailedError
+        raise LocalizationError
 
     results = [task.result() for task in tasks]
     return simple_union(*results)

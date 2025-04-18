@@ -2,6 +2,7 @@ import pytest
 
 from src.threepio.llm import MockLLMStrategy, LLMContext
 from src.threepio.main import generate_localized_dictionary
+from tests.utils import get_absolute_path
 
 
 def get_default_expected_dict():
@@ -64,7 +65,7 @@ async def test_generate_localized_dictionary_non_empty_source_dict_and_empty_pro
         llm_context=llm_context,
         source_dict=source_dict,
         nom_keys=nom_keys,
-        target_dict_path='resources/languages/tr.properties',
+        target_dict_path=get_absolute_path('resources/languages/tr.properties'),
         target_language='Turkish'
     )
 

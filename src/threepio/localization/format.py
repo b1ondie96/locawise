@@ -1,5 +1,7 @@
 from enum import Enum
 
+from src.threepio.errors import LocalizationFormatError
+
 
 class LocalizationFormat(Enum):
     PROPERTIES = "properties"
@@ -8,13 +10,13 @@ class LocalizationFormat(Enum):
 def detect_format(file_path: str) -> LocalizationFormat:
     suffix: str = find_suffix(file_path)
     if not suffix:
-        raise ValueError(f"Format of the file could not be detected. file_path={file_path}")
+        raise LocalizationFormatError(f"Format of the file could not be detected. file_path={file_path}")
 
     for format_type in LocalizationFormat:
         if format_type.value.lower() == suffix.lower():
             return format_type
 
-    raise ValueError(f"Unsupported localization format: {suffix}")
+    raise LocalizationFormatError(f"Unsupported localization format: {suffix}")
 
 
 def find_suffix(file_path: str) -> str:

@@ -14,5 +14,13 @@ class InvalidLLMOutputError(Exception):
     pass
 
 
-class LocalizationFailedError(Exception):
+class LocalizationError(Exception):
+    pass
+
+
+class FileSaveError(Exception):
+    pass
+
+
+class LocalizationFormatError(Exception):
     pass

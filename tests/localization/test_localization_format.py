@@ -1,5 +1,6 @@
 import pytest
 
+from src.threepio.errors import LocalizationFormatError
 from src.threepio.localization.format import find_suffix, LocalizationFormat, detect_format
 
 
@@ -46,5 +47,5 @@ def test_detect_format_invalid_file(extension: str, mocker):
     find_suffix_mock = mocker.patch("src.threepio.localization.format.find_suffix")
     find_suffix_mock.return_value = extension
 
-    with pytest.raises(ValueError):
+    with pytest.raises(LocalizationFormatError):
         detect_format("anyfile")
