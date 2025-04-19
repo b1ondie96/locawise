@@ -8,6 +8,14 @@ from src.threepio.localization.format import detect_format, LocalizationFormat
 
 
 async def parse(file_path: str) -> dict[str, str]:
+    """
+
+    :param file_path:
+    :return:
+    :raises LocalizationFormatError:
+    :raises ParseError:
+    :raises ValueError:
+    """
     if not file_path:
         return {}
     localization_format: LocalizationFormat = detect_format(file_path)
@@ -21,7 +29,7 @@ async def parse(file_path: str) -> dict[str, str]:
         case LocalizationFormat.PROPERTIES:
             return await parse_java_properties_file(file_content)
         case _:
-            raise ParseError(f"Parsing is not implemented for format={localization_format}")
+            raise ValueError(f"Parsing is not implemented for format={localization_format}")
 
 
 async def parse_java_properties_file(file_content: str) -> dict[str, str]:

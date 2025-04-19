@@ -1,7 +1,7 @@
 import pytest
 
 from src.threepio.llm import MockLLMStrategy, LLMContext
-from src.threepio.main import generate_localized_dictionary
+from src.threepio.processor import generate_localized_dictionary
 from tests.utils import get_absolute_path
 
 
@@ -66,7 +66,7 @@ async def test_generate_localized_dictionary_non_empty_source_dict_and_empty_pro
         source_dict=source_dict,
         nom_keys=nom_keys,
         target_dict_path=get_absolute_path('resources/languages/tr.properties'),
-        target_language='Turkish'
+        target_language_full_name='Turkish'
     )
 
     assert result == expected
