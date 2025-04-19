@@ -10,11 +10,13 @@ from src.threepio.langutils import is_valid_two_letter_lang_code
 
 
 class LocalizationConfig(BaseModel):
+    source_language: str = 'en'
+    target_languages: set[str] = {}
+    localization_root_path: str = ''
+    file_name_pattern: str = '{language}.{ext}'
     context: str = ''
     glossary: dict[str, str] = {}
     tone: str = ''
-    source_language: str = 'en'
-    target_languages: set[str] = {}
 
     @model_validator(mode='after')
     def validate_lang_codes(self) -> Self:
