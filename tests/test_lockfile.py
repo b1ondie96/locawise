@@ -1,4 +1,4 @@
-from src.threepio.lockfile import create_lock_file_content
+from threepio.lockfile import create_lock_file_content
 
 
 def test_create_lock_file_content(mocker):
@@ -12,7 +12,7 @@ def test_create_lock_file_content(mocker):
     def hash_key_value_pair(key, value):
         return f'{key}={value}'
 
-    mocker.patch('src.threepio.lockfile.hash_key_value_pair', side_effect=hash_key_value_pair)
+    mocker.patch('threepio.lockfile.hash_key_value_pair', side_effect=hash_key_value_pair)
 
     result = create_lock_file_content(input_map)
 

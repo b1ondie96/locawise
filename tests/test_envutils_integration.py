@@ -5,12 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from src.threepio.envutils import find_file_by_basename
-
-
-# Import the function we want to test
-# Assuming it's in a module called file_finder
-# If your function is in a different module, adjust this import
+from threepio.envutils import find_file_by_basename
 
 
 class TestFindFileByBasename:

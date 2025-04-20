@@ -1,9 +1,9 @@
 import pytest
 
-from src.threepio import llm
-from src.threepio.errors import LocalizationError
-from src.threepio.llm import LLMContext
-from src.threepio.localization import localize
+from threepio import llm
+from threepio.errors import LocalizationError
+from threepio.llm import LLMContext
+from threepio.localization import localize
 
 
 @pytest.mark.asyncio

@@ -1,6 +1,6 @@
 from enum import Enum
 
-from src.threepio.errors import LocalizationFormatError
+from threepio.errors import LocalizationFormatError
 
 
 class LocalizationFormat(Enum):

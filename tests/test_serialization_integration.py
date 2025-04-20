@@ -3,8 +3,8 @@ import os
 import pytest
 from aiofiles import tempfile
 
-from src.threepio.fileutils import read_file
-from src.threepio.serialization import serialize_and_save
+from threepio.fileutils import read_file
+from threepio.serialization import serialize_and_save
 
 
 @pytest.mark.asyncio

@@ -6,8 +6,8 @@ from abc import ABC, abstractmethod
 from google import genai
 from google.genai import types
 
-from src.threepio import envutils
-from src.threepio.errors import InvalidLLMOutputError, LLMApiError
+from threepio import envutils
+from threepio.errors import InvalidLLMOutputError, LLMApiError
 
 
 class LLMStrategy(ABC):

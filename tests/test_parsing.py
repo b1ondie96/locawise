@@ -1,6 +1,6 @@
 import pytest
 
-from src.threepio.parsing import parse_java_properties_file, read_file
+from threepio.parsing import parse_java_properties_file, read_file
 from tests.parsing_fixtures import expected_dict_for_default_java_properties
 from tests.parsing_fixtures import expected_dict_for_multiline_java_properties
 from tests.parsing_fixtures import expected_dict_for_special_characters_java_properties

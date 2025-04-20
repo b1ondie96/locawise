@@ -1,7 +1,7 @@
 import pytest
 
-from src.threepio.diffutils import retrieve_nom_source_keys, retrieve_keys_to_be_localized
-from src.threepio.lockfile import hash_key_value_pair
+from threepio.diffutils import retrieve_nom_source_keys, retrieve_keys_to_be_localized
+from threepio.lockfile import hash_key_value_pair
 
 
 def test_retrieve_nom_source_keys_no_hashes():

@@ -1,8 +1,8 @@
 import logging
 
-from src.threepio.errors import FileSaveError
-from src.threepio.fileutils import write_to_file
-from src.threepio.localization.format import LocalizationFormat, detect_format
+from threepio.errors import FileSaveError
+from threepio.fileutils import write_to_file
+from threepio.localization.format import LocalizationFormat, detect_format
 
 
 async def serialize_and_save(key_value_pairs: dict[str, str], target_path: str):

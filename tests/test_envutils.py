@@ -1,6 +1,6 @@
 import pytest
 
-from src.threepio.envutils import generate_localization_file_name_without_extension, generate_localization_file_name
+from threepio.envutils import generate_localization_file_name_without_extension, generate_localization_file_name
 
 
 @pytest.mark.parametrize('lang_code, pattern, expected', [

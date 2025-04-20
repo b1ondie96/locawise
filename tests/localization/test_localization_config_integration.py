@@ -1,7 +1,7 @@
 import pytest
 
-from src.threepio.errors import InvalidYamlConfigError
-from src.threepio.localization.config import read_localization_config_yaml, LocalizationConfig
+from threepio.errors import InvalidYamlConfigError
+from threepio.localization.config import read_localization_config_yaml, LocalizationConfig
 from tests.utils import get_absolute_path
 
 DEFAULT_GLOSSARY = {'key1': 'value1', 'key2': 'value2'}

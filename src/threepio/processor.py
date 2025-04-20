@@ -1,12 +1,12 @@
-from src.threepio import parsing
-from src.threepio.dictutils import unsafe_subdict
-from src.threepio.diffutils import retrieve_keys_to_be_localized, retrieve_nom_source_keys
-from src.threepio.langutils import is_valid_two_letter_lang_code, retrieve_lang_full_name
-from src.threepio.llm import LLMContext
-from src.threepio.localization import localize
-from src.threepio.lockfile import read_lock_file
-from src.threepio.parsing import parse
-from src.threepio.serialization import serialize_and_save
+from threepio import parsing
+from threepio.dictutils import unsafe_subdict
+from threepio.diffutils import retrieve_keys_to_be_localized, retrieve_nom_source_keys
+from threepio.langutils import is_valid_two_letter_lang_code, retrieve_lang_full_name
+from threepio.llm import LLMContext
+from threepio.localization import localize
+from threepio.lockfile import read_lock_file
+from threepio.parsing import parse
+from threepio.serialization import serialize_and_save
 
 
 class SourceProcessor:

@@ -1,3 +1,3 @@
-from src.threepio.localization.localization import localize
+from threepio.localization.localize import localize
 
 __all__ = ["localize"]

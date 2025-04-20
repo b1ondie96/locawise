@@ -2,9 +2,9 @@ import logging
 
 import jproperties
 
-from src.threepio.errors import ParseError
-from src.threepio.fileutils import read_file
-from src.threepio.localization.format import detect_format, LocalizationFormat
+from threepio.errors import ParseError
+from threepio.fileutils import read_file
+from threepio.localization.format import detect_format, LocalizationFormat
 
 
 async def parse(file_path: str) -> dict[str, str]:

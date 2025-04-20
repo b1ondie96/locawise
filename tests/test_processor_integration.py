@@ -3,9 +3,9 @@ import os
 import pytest
 from aiofiles import tempfile
 
-from src.threepio.fileutils import read_file, write_to_file
-from src.threepio.llm import MockLLMStrategy, LLMContext
-from src.threepio.processor import SourceProcessor
+from threepio.fileutils import read_file, write_to_file
+from threepio.llm import MockLLMStrategy, LLMContext
+from threepio.processor import SourceProcessor
 
 
 @pytest.fixture

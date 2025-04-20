@@ -1,11 +1,11 @@
-from src.threepio.localization.format import LocalizationFormat
-from src.threepio.serialization import serialize_to_properties_format, serialize
+from threepio.localization.format import LocalizationFormat
+from threepio.serialization import serialize_to_properties_format, serialize
 
 
 def test_serialize_properties_format(mocker):
     input_map = {'name': 'hey'}
     localization_format = LocalizationFormat.PROPERTIES
-    mock = mocker.patch('src.threepio.serialization.serialize_to_properties_format')
+    mock = mocker.patch('threepio.serialization.serialize_to_properties_format')
 
     serialize(input_map, localization_format)
 
