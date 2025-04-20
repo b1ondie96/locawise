@@ -10,7 +10,8 @@ from src.threepio.langutils import is_valid_two_letter_lang_code
 
 
 class LocalizationConfig(BaseModel):
-    source_language: str = 'en'
+    version: str
+    source_language: str
     target_languages: set[str] = {}
     localization_root_path: str = ''
     file_name_pattern: str = '{language}.{ext}'

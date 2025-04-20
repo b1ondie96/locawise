@@ -1,4 +1,5 @@
 # Localization Configuration
+version: v1.0
 glossary:                   # Optional glossary dictionary
   key1: value1
   key2: value2

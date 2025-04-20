@@ -1,4 +1,5 @@
 # Localization Configuration
+version: v1.0
 context: You work for a finance company               # Optional context information
 glossary:                   # Optional glossary dictionary
   key1: value1
