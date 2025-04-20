@@ -21,6 +21,9 @@ async def parse(file_path: str) -> dict[str, str]:
     localization_format: LocalizationFormat = detect_format(file_path)
     try:
         file_content = await read_file(file_path)
+    except FileNotFoundError as e:
+        logging.info(f'File not found {file_path}')
+        raise e
     except Exception as e:
         logging.exception(f"Unknown exception encountered while reading file. {file_path}")
         raise ParseError(f"Unknown exception while reading {file_path}") from e

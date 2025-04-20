@@ -103,7 +103,10 @@ async def generate_localized_dictionary(
             ParsingError: If the target dictionary file cannot be parsed
             LocalizationFailedError: If the localization process fails
         """
-    target_dict: dict[str, str] = await parsing.parse(file_path=target_dict_path)
+    try:
+        target_dict: dict[str, str] = await parsing.parse(file_path=target_dict_path)
+    except FileNotFoundError:
+        target_dict: dict[str, str] = {}
     keys_to_be_localized: set[str] = retrieve_keys_to_be_localized(source_dict, target_dict, nom_keys)
     pairs_to_be_localized: dict[str, str] = unsafe_subdict(source_dict, keys_to_be_localized)
     localized_pairs = await localize(llm_context=llm_context,
