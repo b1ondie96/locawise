@@ -1,4 +1,5 @@
 import logging
+import os.path
 
 import aiofiles
 import xxhash
@@ -8,6 +9,8 @@ from src.threepio.fileutils import write_to_file
 _KEY_VALUE_HASH_LENGTH = 8
 
 _HASH_SEED = 123
+
+_LOCK_FILE_NAME = 'i18n.lock'
 
 
 async def read_lock_file(file_path: str) -> set[str]:
@@ -26,7 +29,7 @@ async def read_lock_file(file_path: str) -> set[str]:
                 key_value_hashes.add(line)
     except FileNotFoundError:
         logging.warning("Lock file not found. Ignore this if it's the first time you are running this application.")
-    except Exception:
+    except (Exception,):
         logging.exception("Unknown error while reading the lock file")
     finally:
         return key_value_hashes
@@ -47,3 +50,7 @@ def create_lock_file_content(key_value_pairs: dict[str, str]):
 
 def hash_key_value_pair(key: str, value: str) -> str:
     return xxhash.xxh32_hexdigest(f"{key}={value}", _HASH_SEED)
+
+
+def create_lock_file_path(base_folder: str) -> str:
+    return str(os.path.join(base_folder, _LOCK_FILE_NAME))

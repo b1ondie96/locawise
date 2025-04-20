@@ -1,7 +1,7 @@
 import pytest
 
 from src.threepio.errors import LocalizationFormatError
-from src.threepio.localization.format import find_suffix, LocalizationFormat, detect_format
+from src.threepio.localization.format import find_extension, LocalizationFormat, detect_format
 
 
 @pytest.mark.parametrize('file_path, expected_extension', [
@@ -21,7 +21,7 @@ from src.threepio.localization.format import find_suffix, LocalizationFormat, de
     ('.gitignore.ignore.txt', 'txt'),
 ])
 def test_find_suffix(file_path: str, expected_extension: str):
-    actual = find_suffix(file_path)
+    actual = find_extension(file_path)
     assert actual == expected_extension
 
 

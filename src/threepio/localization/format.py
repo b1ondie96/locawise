@@ -8,7 +8,7 @@ class LocalizationFormat(Enum):
 
 
 def detect_format(file_path: str) -> LocalizationFormat:
-    suffix: str = find_suffix(file_path)
+    suffix: str = find_extension(file_path)
     if not suffix:
         raise LocalizationFormatError(f"Format of the file could not be detected. file_path={file_path}")
 
@@ -19,7 +19,7 @@ def detect_format(file_path: str) -> LocalizationFormat:
     raise LocalizationFormatError(f"Unsupported localization format: {suffix}")
 
 
-def find_suffix(file_path: str) -> str:
+def find_extension(file_path: str) -> str:
     if '.' not in file_path:
         return ""
 

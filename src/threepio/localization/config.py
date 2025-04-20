@@ -11,8 +11,8 @@ from src.threepio.langutils import is_valid_two_letter_lang_code
 
 class LocalizationConfig(BaseModel):
     version: str
-    source_language: str
-    target_languages: set[str] = {}
+    source_lang_code: str
+    target_lang_codes: set[str] = {}
     localization_root_path: str = ''
     file_name_pattern: str = '{language}.{ext}'
     context: str = ''
@@ -21,10 +21,10 @@ class LocalizationConfig(BaseModel):
 
     @model_validator(mode='after')
     def validate_lang_codes(self) -> Self:
-        if not is_valid_two_letter_lang_code(self.source_language):
-            raise ValueError(f'Invalid source language code {self.source_language}')
+        if not is_valid_two_letter_lang_code(self.source_lang_code):
+            raise ValueError(f'Invalid source language code {self.source_lang_code}')
 
-        for lang_code in self.target_languages:
+        for lang_code in self.target_lang_codes:
             if not is_valid_two_letter_lang_code(lang_code):
                 raise ValueError(f'{lang_code} is not a valid language code')
 
