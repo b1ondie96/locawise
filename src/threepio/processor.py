@@ -1,3 +1,5 @@
+import logging
+
 from threepio import parsing
 from threepio.dictutils import unsafe_subdict
 from threepio.diffutils import retrieve_keys_to_be_localized, retrieve_nom_source_keys
@@ -38,6 +40,7 @@ class SourceProcessor:
         :raises LocalizationFailedError:
         :raises FileSaveError: error while saving to the target file
         """
+        logging.info(f'Localizing to target language {target_path} {target_lang_code}')
         if not target_path.strip():
             raise ValueError("Target path cannot be empty")
 

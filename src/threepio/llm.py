@@ -86,7 +86,9 @@ class GeminiLLMStrategy(LLMStrategy):
 
     def _create_config(self, system_prompt):
         return types.GenerateContentConfig(temperature=self.temperature,
-                                           system_instruction=system_prompt)
+                                           system_instruction=system_prompt,
+                                           automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True)
+                                           )
 
 
 def _extract_json_text(text) -> str:

@@ -31,6 +31,6 @@ def find_file_by_basename(basename, search_path) -> str | None:
     for root, dirs, files in os.walk(search_path):
         for file in files:
             # Check if the file name (without extension) matches the basename
-            if os.path.splitext(file)[0] == basename:
+            if str(os.path.splitext(file)[0]).lower() in basename.lower():
                 return str(os.path.join(root, file))
     return None

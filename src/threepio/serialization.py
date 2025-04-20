@@ -11,6 +11,7 @@ async def serialize_and_save(key_value_pairs: dict[str, str], target_path: str):
     :raises FileSaveError
     :raises ValueError
     """
+    logging.info(f"Serializing and saving to target_path={target_path}")
     if not target_path.strip():
         raise ValueError(f"Target path cannot be empty")
 

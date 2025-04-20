@@ -13,7 +13,7 @@ async def localize(llm_context: LLMContext,
                    context: str = '',
                    tone: str = '',
                    glossary: dict[str, str] | None = None,
-                   chunk_size: int = 30
+                   chunk_size: int = 100
                    ) -> dict[str, str]:
     if glossary is None:
         glossary = {}
@@ -27,8 +27,8 @@ async def localize(llm_context: LLMContext,
             for chunk in chunks:
                 user_prompt = generate_user_prompt(chunk, target_language)
                 tasks.append(tg.create_task(llm_context.call(system_prompt, user_prompt)))
-    except* (LLMApiError, InvalidLLMOutputError) as e:
-        logging.warning(f"Translation failed. {e}")
+    except* (LLMApiError, InvalidLLMOutputError):
+        logging.warning(f"Translation failed.")
         raise LocalizationError
     except* Exception:
         logging.exception("Unknown error occurred!")
