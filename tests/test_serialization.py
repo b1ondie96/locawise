@@ -37,3 +37,18 @@ def test_serialize_to_properties_format_multiple_pairs():
 
     result = serialize_to_properties_format(input_map)
     assert result == 'age=19\ndistance=150\nlocation=frankfurt  \nmessage=I love world\npresence=\n'
+
+
+def test_serialize_to_properties_format_multilines():
+    input_map = {
+        'description': 'This is a test\nwith multiple lines',
+        'message': 'Long message\nwith new lines\nMany lines\n',
+        'location': 'frankfurt  ',
+    }
+    expected = """description=This is a test\\nwith multiple lines
+location=frankfurt  
+message=Long message\\nwith new lines\\nMany lines\\n
+"""
+
+    result = serialize_to_properties_format(input_map)
+    assert result == expected
