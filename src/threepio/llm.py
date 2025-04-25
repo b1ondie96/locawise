@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 
 from google import genai
 from google.genai import types
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 from threepio import envutils
 from threepio.errors import InvalidLLMOutputError, LLMApiError
@@ -20,6 +21,7 @@ class LLMContext:
     def __init__(self, strategy: LLMStrategy):
         self.strategy = strategy
 
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1.5, exp_base=2))
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         """
         :raise InvalidLLMOutputError
@@ -105,9 +107,3 @@ def _parse_json_text(text: str) -> dict[str, str]:
         json_text: str = _extract_json_text(text)
 
     return json.loads(json_text)
-
-
-# this will be determined dynamically in the future
-_strategy = GeminiLLMStrategy()
-
-context = LLMContext(strategy=_strategy)
