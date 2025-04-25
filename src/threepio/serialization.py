@@ -1,6 +1,9 @@
+import io
 import logging
 
-from threepio.errors import FileSaveError
+import jproperties
+
+from threepio.errors import FileSaveError, SerializationError
 from threepio.fileutils import write_to_file
 from threepio.localization.format import LocalizationFormat, detect_format
 
@@ -34,12 +37,17 @@ def serialize(key_value_map: dict[str, str], localization_format: LocalizationFo
 
 
 def serialize_to_properties_format(key_value_map: dict[str, str]) -> str:
-    content = ''
+    try:
+        with io.BytesIO() as output_stream:
+            # Call your function with the memory stream
+            encoding = 'utf-8'
+            properties = jproperties.Properties()
+            properties.properties = key_value_map
+            properties.store(output_stream, encoding=encoding, strict=True, strip_meta=True, timestamp=False)
+            binary_content: bytes = output_stream.getvalue()
 
-    for k in sorted(key_value_map.keys()):
-        key = k.encode("unicode_escape").decode("utf-8")
-        value = key_value_map[k].encode("unicode_escape").decode("utf-8")
-
-        content += f'{key}={value}\n'
-
-    return content
+            # Convert to string using the same encoding that was used for writing
+            return binary_content.decode(encoding=encoding)
+    except Exception as e:
+        logging.exception('A serialization error occurred.')
+        raise SerializationError from e

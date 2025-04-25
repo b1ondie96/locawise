@@ -1,4 +1,5 @@
 import pytest
+from tenacity import wait_none
 
 from threepio import llm
 from threepio.errors import LocalizationError
@@ -44,7 +45,7 @@ async def test_localize_with_mock_strategy_and_valid_pairs(chunk_size):
 
 
 @pytest.mark.asyncio
-async def test_localize_with_mock_strategy_and_llm_api_error():
+async def test_localize_with_mock_strategy_and_llm_api_error(monkeypatch):
     strategy = llm.MockLLMStrategy()
     context = LLMContext(strategy)
     pairs = {
@@ -58,12 +59,14 @@ async def test_localize_with_mock_strategy_and_llm_api_error():
     }
     target_language = 'en'
 
+    monkeypatch.setattr(LLMContext.call.retry, "wait", wait_none())
+
     with pytest.raises(LocalizationError):
         await localize(context, pairs, target_language, chunk_size=1)
 
 
 @pytest.mark.asyncio
-async def test_localize_with_mock_strategy_and_invalid_llm_output_error():
+async def test_localize_with_mock_strategy_and_invalid_llm_output_error(monkeypatch):
     strategy = llm.MockLLMStrategy()
     context = LLMContext(strategy)
     pairs = {
@@ -76,6 +79,8 @@ async def test_localize_with_mock_strategy_and_invalid_llm_output_error():
         'key7': 'value7',
     }
     target_language = 'en'
+
+    monkeypatch.setattr(LLMContext.call.retry, "wait", wait_none())
 
     with pytest.raises(LocalizationError):
         await localize(context, pairs, target_language, chunk_size=2)

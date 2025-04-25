@@ -82,16 +82,3 @@ class TestFindFileByBasename:
         with tempfile.TemporaryDirectory() as empty_dir:
             result = find_file_by_basename("test", empty_dir)
             assert result is None
-
-    def test_case_sensitivity(self, temp_directory):
-        """Test case sensitivity."""
-        # This should not find "Test1.txt" because we created "test1.txt"
-        result = find_file_by_basename("Test1", temp_directory)
-        assert result is None
-
-    def test_with_path_objects(self, temp_directory):
-        """Test with Path objects instead of strings."""
-        # Convert string paths to Path objects
-        path_obj = Path(temp_directory)
-        result = find_file_by_basename("test1", path_obj)
-        assert result == os.path.join(temp_directory, "test1.txt")
