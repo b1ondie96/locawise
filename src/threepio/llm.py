@@ -23,7 +23,7 @@ class LLMContext:
     def __init__(self, strategy: LLMStrategy):
         self.strategy = strategy
 
-    @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1.5, exp_base=2) + wait_random(min=0, max=2))
+    @retry(stop=stop_after_attempt(4), wait=wait_exponential(multiplier=3, exp_base=2) + wait_random(min=0, max=2))
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         """
         :raise InvalidLLMOutputError

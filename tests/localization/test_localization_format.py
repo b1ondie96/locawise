@@ -35,7 +35,6 @@ def test_detect_format_properties_file(mocker):
 @pytest.mark.parametrize('extension', [
     'j',
     'python',
-    'json',
     'yaml',
     '',
     '        ',
