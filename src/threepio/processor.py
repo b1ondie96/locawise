@@ -119,12 +119,14 @@ async def generate_localized_dictionary(
         raise LocalizationFileAlreadyUpToDateError()
 
     pairs_to_be_localized: dict[str, str] = unsafe_subdict(source_dict, keys_to_be_localized)
+    chunk_size = int(max(len(pairs_to_be_localized) / 5, 1000))
     localized_pairs = await localize(llm_context=llm_context,
                                      pairs=pairs_to_be_localized,
                                      target_language=target_language_full_name,
                                      context=context,
                                      tone=tone,
-                                     glossary=glossary)
+                                     glossary=glossary,
+                                     chunk_size=chunk_size)
 
     target_dict.update(localized_pairs)
 

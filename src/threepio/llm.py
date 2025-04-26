@@ -23,7 +23,7 @@ class LLMContext:
     def __init__(self, strategy: LLMStrategy):
         self.strategy = strategy
 
-    @retry(stop=stop_after_attempt(4), wait=wait_exponential(multiplier=3, exp_base=2) + wait_random(min=0, max=2))
+    @retry(stop=stop_after_attempt(4), wait=wait_exponential(multiplier=5, exp_base=2) + wait_random(min=0, max=2))
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         """
         :raise InvalidLLMOutputError
@@ -97,8 +97,8 @@ class GeminiLLMStrategy(LLMStrategy):
 
 class OpenAiLLMStrategy(LLMStrategy):
     def __init__(self):
-        self.client = openai.AsyncClient(api_key=retrieve_openai_api_key())
-        self.model = 'gpt-4o'
+        self.client = openai.AsyncClient(api_key=retrieve_openai_api_key(), max_retries=1)
+        self.model = 'gpt-4.5-preview'
         self.temperature = 0.1
 
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
@@ -107,7 +107,7 @@ class OpenAiLLMStrategy(LLMStrategy):
                 model=self.model,
                 instructions=system_prompt,
                 input=user_prompt,
-                temperature=self.temperature
+                temperature=self.temperature,
             )
         except Exception:
             logging.exception(f'LLM call failed')

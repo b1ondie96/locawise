@@ -13,7 +13,7 @@ async def localize(llm_context: LLMContext,
                    context: str = '',
                    tone: str = '',
                    glossary: dict[str, str] | None = None,
-                   chunk_size: int = 100
+                   chunk_size: int = 300
                    ) -> dict[str, str]:
     if glossary is None:
         glossary = {}
