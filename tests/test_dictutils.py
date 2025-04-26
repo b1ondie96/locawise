@@ -1,6 +1,6 @@
 import pytest
 
-from threepio.dictutils import chunk_dict, simple_union, flatten_dict
+from threepio.dictutils import chunk_dict, simple_union, flatten_dict, unflatten_dict
 from threepio.errors import UnsupportedLocalizationKeyError
 
 
@@ -210,3 +210,157 @@ def test_flatten_dict_key_with_level_separator():
 
     with pytest.raises(UnsupportedLocalizationKeyError):
         flatten_dict(_dict, level_separator='//')
+
+
+def test_unflatten_dict_empty_dict():
+    _dict = {}
+    result = unflatten_dict(_dict, '//')
+    assert result == {}
+
+
+def test_unflatten_dict_regular_dict():
+    _dict = {
+        'a': 'b',
+        'a2': 'b2',
+        'a3': 'b3',
+        'a4': 'b4',
+        'a5': 'b5',
+    }
+    result = unflatten_dict(_dict, '//')
+
+    expected = {
+        'a': 'b',
+        'a2': 'b2',
+        'a3': 'b3',
+        'a4': 'b4',
+        'a5': 'b5',
+    }
+    assert result == expected
+
+
+def test_unflatten_dict_one_level_nested_dict():
+    _dict = {
+        'a//b1': 'c1',
+        'a//b2': 'c2',
+        'a//b3': 'c3',
+    }
+
+    result = unflatten_dict(_dict, '//')
+
+    expected = {
+        'a': {
+            'b1': 'c1',
+            'b2': 'c2',
+            'b3': 'c3',
+        }
+    }
+
+    assert result == expected
+
+
+def test_unflatten_dict_one_level_nested_dict_with_regulars():
+    _dict = {
+        'a//b1': 'c1',
+        'a//b2': 'c2',
+        'a//b3': 'c3',
+        'd1': 'e1',
+        'd2': 'e2',
+        'd3': 'e3',
+    }
+
+    result = unflatten_dict(_dict, '//')
+
+    expected = {
+        'a': {
+            'b1': 'c1',
+            'b2': 'c2',
+            'b3': 'c3',
+        },
+        'd1': 'e1',
+        'd2': 'e2',
+        'd3': 'e3',
+    }
+
+    assert result == expected
+
+
+def test_unflatten_dict_two_level_nested_dict():
+    _dict = {
+        'a//b//c1': 'h1',
+        'a//b//c2': 'h2',
+        'a//b//c3': 'h3',
+    }
+
+    result = unflatten_dict(_dict, '//')
+
+    expected = {
+        'a': {
+            'b': {
+                'c1': 'h1',
+                'c2': 'h2',
+                'c3': 'h3',
+            }
+        },
+    }
+
+    assert result == expected
+
+
+def test_unflatten_dict_three_level_nested_dict():
+    _dict = {
+        'a//b//c//d1': 'h1',
+        'a//b//c//d2': 'h2',
+        'a//b//c//d3': 'h3',
+    }
+
+    result = unflatten_dict(_dict, '//')
+
+    expected = {
+        'a': {
+            'b': {
+                'c': {
+                    'd1': 'h1',
+                    'd2': 'h2',
+                    'd3': 'h3',
+                }
+            }
+        },
+    }
+
+    assert result == expected
+
+
+def test_unflatten_dict_mixed_nested_dict():
+    _dict = {
+        'a//b//c//d1': 'h1',
+        'a//b//c2//d2': 'h2',
+        'a//b//c//d3': 'h3',
+        'a//c//d': 'h4',
+        'a//b//e//d': 'h5',
+        'f': 'f1'
+    }
+
+    result = unflatten_dict(_dict, '//')
+
+    expected = {
+        'a': {
+            'b': {
+                'c': {
+                    'd1': 'h1',
+                    'd3': 'h3',
+                },
+                'c2': {
+                    'd2': 'h2'
+                },
+                'e': {
+                    'd': 'h5'
+                }
+            },
+            'c': {
+                'd': 'h4'
+            }
+        },
+        'f': 'f1'
+    }
+
+    assert result == expected

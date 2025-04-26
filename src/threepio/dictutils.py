@@ -37,3 +37,23 @@ def flatten_dict(_dict: dict[str, Any], level_separator: str = '_/') -> dict[str
         return result
 
     return flatten_dict_recursive('', _dict)
+
+
+def unflatten_dict(_dict: dict[str, str], level_separator: str = '_/') -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for k, v in _dict.items():
+        nodes = k.split(level_separator)
+
+        # dict to add the key-value pair
+        leaf_dict = result
+        for index, node in enumerate(nodes):
+            if index == len(nodes) - 1:
+                leaf_dict[node] = v
+            else:
+                temp = leaf_dict.get(node)
+                if temp is None:
+                    leaf_dict[node] = {}
+
+                leaf_dict = leaf_dict[node]
+
+    return result
