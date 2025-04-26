@@ -23,7 +23,7 @@ class LLMContext:
     def __init__(self, strategy: LLMStrategy):
         self.strategy = strategy
 
-    @retry(stop=stop_after_attempt(4), wait=wait_exponential(multiplier=5, exp_base=2) + wait_random(min=0, max=2))
+    @retry(stop=stop_after_attempt(6), wait=wait_exponential(multiplier=5, exp_base=3) + wait_random(min=0, max=2))
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         """
         :raise InvalidLLMOutputError
@@ -68,7 +68,7 @@ class GeminiLLMStrategy(LLMStrategy):
     def __init__(self):
         self.client = genai.Client(api_key=envutils.retrieve_gemini_api_key())
         self.model = 'gemini-2.0-flash'
-        self.temperature = 0.1
+        self.temperature = 0
 
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         config = self._create_config(system_prompt)
@@ -78,15 +78,14 @@ class GeminiLLMStrategy(LLMStrategy):
                 contents=user_prompt,
                 config=config
             )
-        except Exception:
-            logging.exception(f'LLM call failed')
-            raise LLMApiError
+        except Exception as e:
+            raise LLMApiError from e
 
         try:
             return _parse_json_text(response.text)
-        except Exception:
-            logging.exception(f'{response.text} could not be parsed into a dictionary')
-            raise InvalidLLMOutputError
+        except Exception as e:
+            logging.error(f'{response.text} could not be parsed into a dictionary')
+            raise InvalidLLMOutputError from e
 
     def _create_config(self, system_prompt):
         return types.GenerateContentConfig(temperature=self.temperature,
@@ -97,9 +96,9 @@ class GeminiLLMStrategy(LLMStrategy):
 
 class OpenAiLLMStrategy(LLMStrategy):
     def __init__(self):
-        self.client = openai.AsyncClient(api_key=retrieve_openai_api_key(), max_retries=1)
-        self.model = 'gpt-4.5-preview'
-        self.temperature = 0.1
+        self.client = openai.AsyncClient(api_key=retrieve_openai_api_key())
+        self.model = 'gpt-4.1-mini'
+        self.temperature = 0
 
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         try:
@@ -109,15 +108,14 @@ class OpenAiLLMStrategy(LLMStrategy):
                 input=user_prompt,
                 temperature=self.temperature,
             )
-        except Exception:
-            logging.exception(f'LLM call failed')
-            raise LLMApiError
+        except Exception as e:
+            raise LLMApiError from e
 
         try:
             return _parse_json_text(response.output_text)
-        except Exception:
-            logging.exception(f'{response.text} could not be parsed into a dictionary')
-            raise InvalidLLMOutputError
+        except Exception as e:
+            logging.error(f'{response.output_text} could not be parsed into a dictionary')
+            raise InvalidLLMOutputError from e
 
 
 def _extract_json_text(text) -> str:

@@ -23,15 +23,14 @@ async def localize(llm_context: LLMContext,
     tasks = []
     try:
         async with asyncio.TaskGroup() as tg:
-            logging.info("Generating tasks for translation")
-            for chunk in chunks:
+            for index, chunk in enumerate(chunks):
+                logging.info(f"Generating task for chunk {index + 1}/{len(chunks)} for {target_language}")
                 user_prompt = generate_user_prompt(chunk, target_language)
                 tasks.append(tg.create_task(llm_context.call(system_prompt, user_prompt)))
     except* (LLMApiError, InvalidLLMOutputError):
         logging.warning(f"Translation failed.")
         raise LocalizationError
     except* Exception:
-        logging.exception("Unknown error occurred!")
         raise LocalizationError
 
     results = [task.result() for task in tasks]

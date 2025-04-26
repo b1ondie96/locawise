@@ -4,10 +4,9 @@ import json
 def generate_user_prompt(pairs: dict[str, str], target_language: str):
     return f"""
 Translate the following values to {target_language} according to the criteria you were given.
-Input can contain nested json dictionaries. Translate their values and keep their structure.
 
 Input:
-{json.dumps(pairs)}
+{json.dumps(pairs, sort_keys=True, ensure_ascii=False, indent=4)}
 Target Language:
 {target_language}
 
@@ -53,9 +52,26 @@ Process Guidelines:
    - For button labels and short prompts, prioritize brevity
 5. Adapt date formats, number formats, and units of measurement appropriate to the target locale
 6. Use appropriate pluralization rules for the target language
+7. Output the translated key value pairs as valid JSON.
 
 Your input will be a list of key value pairs.
 Always output json translated key value pairs.
+
+Make sure you always output VALID JSON that adheres to the format. Your JSON text output will be parsed
+to an object. Thus, the JSON text MUST be valid.
+
+The output can be in different languages. Make sure you output valid JSON in every language.
+Make sure keys and values in JSON are enclosed with double quotes and characters are UTF-8 characters.
+Do not alter keys. Output the any key as it is.
+Keys are unique ids that will be used by another AI agent to determine the value. Do not remove any characters
+from the keys, preserve the keys.
+
+Values will be used by another AI agent, for analysis. Thus, make sure you output valid json. If there are missing
+quotes in the output text, fix it.
+Before outputting the final result, check if the keys match with the input keys. If there is a discrepancy
+between keys, fix it.
+
+The output can be in any language. Make sure you support all UTF-8 characters.
 
 Example input:
 

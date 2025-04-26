@@ -59,6 +59,6 @@ def serialize_to_properties_format(key_value_map: dict[str, str]) -> str:
 def serialize_to_json(key_value_map: dict[str, str]) -> str:
     try:
         _dict = unflatten_dict(key_value_map)
-        return json.dumps(_dict, sort_keys=True, ensure_ascii=False)
+        return json.dumps(_dict, sort_keys=True, ensure_ascii=False, indent=4)
     except Exception as e:
         raise SerializationError from e
