@@ -1,5 +1,8 @@
 import itertools
 from itertools import batched
+from typing import Any
+
+from threepio.errors import UnsupportedLocalizationKeyError
 
 
 def chunk_dict(data, size: int):
@@ -16,3 +19,21 @@ def simple_union(*dicts):
 def unsafe_subdict(original_dict: dict, sub_keys: set):
     "unsafe in the sense that if a key is not in the dict it will raise an error"
     return dict((k, original_dict[k]) for k in sub_keys)
+
+
+def flatten_dict(_dict: dict[str, Any], level_separator: str = '_/') -> dict[str, str]:
+    def flatten_dict_recursive(prefix: str, _dict: dict[str, Any]) -> dict[str, str]:
+        result = {}
+        for k, v in _dict.items():
+            if level_separator in k:
+                raise UnsupportedLocalizationKeyError(f'{level_separator} is not allowed in keys. Please change it.')
+
+            if isinstance(v, dict):
+                sub_result = flatten_dict_recursive(prefix + k + level_separator, v)
+                result.update(sub_result)
+            else:
+                result[prefix + k] = v
+
+        return result
+
+    return flatten_dict_recursive('', _dict)

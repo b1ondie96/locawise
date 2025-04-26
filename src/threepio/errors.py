@@ -25,5 +25,9 @@ class FileSaveError(Exception):
 class LocalizationFormatError(Exception):
     pass
 
+
 class SerializationError(Exception):
+    pass
+
+class UnsupportedLocalizationKeyError(Exception):
     pass

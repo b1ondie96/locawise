@@ -1,6 +1,7 @@
 import pytest
 
-from threepio.dictutils import chunk_dict, simple_union, unsafe_subdict
+from threepio.dictutils import chunk_dict, simple_union, flatten_dict
+from threepio.errors import UnsupportedLocalizationKeyError
 
 
 def test_chunk_dict_empty_dict():
@@ -52,15 +53,160 @@ def test_simple_union_three_dicts():
     assert actual == {'k1': 'v1', 'k2': 'v2', 'k3': 'v3'}
 
 
-@pytest.mark.parametrize("original, keys, expected", [
-    ({'a1': 'b1', 'a2': 'b2'}, {'a1'}, {'a1': 'b1'}),
-    ({'a1': 'b1', 'a2': 'b2'}, {'a1', 'a2'}, {'a1': 'b1', 'a2': 'b2'}),
-    ({'a1': 'b1', 'a2': 'b2'}, set(), {}),
-    ({'a1': None, 'a2': 'b2'}, {'a1'}, {'a1': None}),
-    ({'a1': 123, 'a2': 'b2'}, {'a1'}, {'a1': 123}),
-    ({'a1': [1, 2, 3], 'a2': 'b2'}, {'a1'}, {'a1': [1, 2, 3]}),
-    ({'a1': {'nested': 'value'}, 'a2': 'b2'}, {'a1'}, {'a1': {'nested': 'value'}}),
-])
-def test_subdict(original, keys, expected):
-    result = unsafe_subdict(original, keys)
+def test_flatten_dict_empty_dict():
+    _dict = {}
+    result = flatten_dict(_dict, level_separator='//')
+    assert result == {}
+
+
+def test_flatten_dict_no_nested_levels():
+    _dict = {
+        'a': 'a1',
+        'b': 'b1',
+        'c': 'c1'
+    }
+    result = flatten_dict(_dict, level_separator='//')
+
+    expected = {
+        'a': 'a1',
+        'b': 'b1',
+        'c': 'c1'
+    }
     assert result == expected
+
+
+def test_flatten_dict_single_one_nested_level():
+    _dict = {
+        'a': {
+            'b': 'b1',
+            'c': 'c1'
+        }
+    }
+    result = flatten_dict(_dict, level_separator='//')
+
+    expected = {
+        'a//b': 'b1',
+        'a//c': 'c1'
+    }
+    assert result == expected
+
+
+def test_flatten_dict_multiple_one_nested_level():
+    _dict = {
+        'a': {
+            'b': 'b1',
+            'c': 'c1',
+            'd': 'd1'
+        },
+        'b': {
+            'b': 'b1',
+            'c': 'c1',
+            'd': 'd1'
+        },
+        'e': 'e1'
+    }
+    result = flatten_dict(_dict, level_separator='//')
+
+    expected = {
+        'a//b': 'b1',
+        'a//c': 'c1',
+        'a//d': 'd1',
+        'b//b': 'b1',
+        'b//c': 'c1',
+        'b//d': 'd1',
+        'e': 'e1'
+    }
+    assert result == expected
+
+
+def test_flatten_dict_two_nested_levels():
+    _dict = {
+        'a': {
+            'b': {
+                'c': 'c1'
+            },
+            'd': {
+                'e1': 'e2',
+                'e3': 'e4',
+            }
+        }
+    }
+    result = flatten_dict(_dict, level_separator='//')
+
+    expected = {
+        'a//b//c': 'c1',
+        'a//d//e1': 'e2',
+        'a//d//e3': 'e4'
+    }
+    assert result == expected
+
+
+def test_flatten_dict_mixed_two_nested_levels():
+    _dict = {
+        'a': {
+            'b': {
+                'c': 'c1',
+                'd': 'd1'
+            },
+            'e': 'e1'
+        },
+        'f': 'f1'
+    }
+    result = flatten_dict(_dict, level_separator='//')
+
+    expected = {
+        'a//b//c': 'c1',
+        'a//b//d': 'd1',
+        'a//e': 'e1',
+        'f': 'f1'
+    }
+    assert result == expected
+
+
+def test_flatten_dict_one_nested_level_and_two_nested_level():
+    _dict = {
+        'a': {
+            'b': 'b1'
+        },
+        'c': {
+            'd': {
+                'e': 'e1'
+            }
+        },
+        'f': 'f1'
+    }
+    result = flatten_dict(_dict, level_separator='//')
+
+    expected = {
+        'a//b': 'b1',
+        'c//d//e': 'e1',
+        'f': 'f1'
+    }
+    assert result == expected
+
+
+def test_flatten_dict_single_three_nested_levels():
+    _dict = {
+        'a': {
+            'b': {
+                'c': {
+                    'd': 'd1'
+                }
+            }
+        }
+    }
+    result = flatten_dict(_dict, level_separator='//')
+
+    expected = {
+        'a//b//c//d': 'd1'
+    }
+    assert result == expected
+
+
+def test_flatten_dict_key_with_level_separator():
+    _dict = {
+        'a//': 'b'
+    }
+
+    with pytest.raises(UnsupportedLocalizationKeyError):
+        flatten_dict(_dict, level_separator='//')
