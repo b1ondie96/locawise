@@ -1,7 +1,9 @@
+import json
 import logging
 
 import jproperties
 
+from threepio.dictutils import flatten_dict
 from threepio.errors import ParseError
 from threepio.fileutils import read_file
 from threepio.localization.format import detect_format, LocalizationFormat
@@ -31,6 +33,8 @@ async def parse(file_path: str) -> dict[str, str]:
     match localization_format:
         case LocalizationFormat.PROPERTIES:
             return await parse_java_properties_file(file_content)
+        case LocalizationFormat.JSON:
+            return await parse_json_file(file_content)
         case _:
             raise ValueError(f"Parsing is not implemented for format={localization_format}")
 
@@ -42,3 +46,12 @@ async def parse_java_properties_file(file_content: str) -> dict[str, str]:
         return p.properties
     except Exception as e:
         raise ParseError("Java properties file could not be parsed") from e
+
+
+async def parse_json_file(file_content: str) -> dict[str, str]:
+    try:
+        _dict = json.loads(file_content)
+        _dict = flatten_dict(_dict)
+        return _dict
+    except Exception as e:
+        raise ParseError('JSON file could not be parsed') from e

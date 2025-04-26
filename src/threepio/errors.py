@@ -29,5 +29,10 @@ class LocalizationFormatError(Exception):
 class SerializationError(Exception):
     pass
 
+
 class UnsupportedLocalizationKeyError(Exception):
+    pass
+
+
+class LocalizationFileAlreadyUpToDateError(Exception):
     pass

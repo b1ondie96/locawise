@@ -1,8 +1,10 @@
 import io
+import json
 import logging
 
 import jproperties
 
+from threepio.dictutils import unflatten_dict
 from threepio.errors import FileSaveError, SerializationError
 from threepio.fileutils import write_to_file
 from threepio.localization.format import LocalizationFormat, detect_format
@@ -32,6 +34,8 @@ def serialize(key_value_map: dict[str, str], localization_format: LocalizationFo
     match localization_format:
         case LocalizationFormat.PROPERTIES:
             return serialize_to_properties_format(key_value_map)
+        case LocalizationFormat.JSON:
+            return serialize_to_json(key_value_map)
         case _:
             raise ValueError(f"Serialization for {localization_format} is not implemented")
 
@@ -49,5 +53,12 @@ def serialize_to_properties_format(key_value_map: dict[str, str]) -> str:
             # Convert to string using the same encoding that was used for writing
             return binary_content.decode(encoding=encoding)
     except Exception as e:
-        logging.exception('A serialization error occurred.')
+        raise SerializationError from e
+
+
+def serialize_to_json(key_value_map: dict[str, str]) -> str:
+    try:
+        _dict = unflatten_dict(key_value_map)
+        return json.dumps(_dict, sort_keys=True, ensure_ascii=False)
+    except Exception as e:
         raise SerializationError from e

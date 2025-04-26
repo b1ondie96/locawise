@@ -3,6 +3,7 @@ import logging
 from threepio import parsing
 from threepio.dictutils import unsafe_subdict
 from threepio.diffutils import retrieve_keys_to_be_localized, retrieve_nom_source_keys
+from threepio.errors import LocalizationFileAlreadyUpToDateError
 from threepio.langutils import is_valid_two_letter_lang_code, retrieve_lang_full_name
 from threepio.llm import LLMContext
 from threepio.localization import localize
@@ -49,16 +50,18 @@ class SourceProcessor:
 
         target_lang_full_name = retrieve_lang_full_name(target_lang_code)
 
-        target_dict = await generate_localized_dictionary(self.llm_context,
-                                                          source_dict=self.source_dict,
-                                                          nom_keys=self.nom_keys,
-                                                          target_dict_path=target_path,
-                                                          target_language_full_name=target_lang_full_name,
-                                                          context=self.context,
-                                                          tone=self.tone,
-                                                          glossary=self.glossary)
-
-        await serialize_and_save(target_dict, target_path)
+        try:
+            target_dict = await generate_localized_dictionary(self.llm_context,
+                                                              source_dict=self.source_dict,
+                                                              nom_keys=self.nom_keys,
+                                                              target_dict_path=target_path,
+                                                              target_language_full_name=target_lang_full_name,
+                                                              context=self.context,
+                                                              tone=self.tone,
+                                                              glossary=self.glossary)
+            await serialize_and_save(target_dict, target_path)
+        except LocalizationFileAlreadyUpToDateError:
+            logging.info(f'Localization is already up to date for {target_lang_code}')
 
 
 async def create_source_processor(llm_context: LLMContext,
@@ -111,6 +114,10 @@ async def generate_localized_dictionary(
     except FileNotFoundError:
         target_dict: dict[str, str] = {}
     keys_to_be_localized: set[str] = retrieve_keys_to_be_localized(source_dict, target_dict, nom_keys)
+
+    if not keys_to_be_localized:
+        raise LocalizationFileAlreadyUpToDateError()
+
     pairs_to_be_localized: dict[str, str] = unsafe_subdict(source_dict, keys_to_be_localized)
     localized_pairs = await localize(llm_context=llm_context,
                                      pairs=pairs_to_be_localized,

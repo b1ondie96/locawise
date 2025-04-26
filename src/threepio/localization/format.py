@@ -5,6 +5,7 @@ from threepio.errors import LocalizationFormatError
 
 class LocalizationFormat(Enum):
     PROPERTIES = "properties"
+    JSON = 'json'
 
 
 def detect_format(file_path: str) -> LocalizationFormat:
