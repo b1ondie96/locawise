@@ -10,6 +10,11 @@ class LLMApiError(Exception):
     pass
 
 
+# retryable
+class TransientLLMApiError(Exception):
+    pass
+
+
 class InvalidLLMOutputError(Exception):
     pass
 

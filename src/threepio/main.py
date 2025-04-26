@@ -11,16 +11,20 @@ from processor import create_source_processor
 from threepio.llm import OpenAiLLMStrategy
 
 
-async def main(llm_context: LLMContext, config_path: str):
+async def main(config_path: str):
     config = await read_localization_config_yaml(config_path)
     logging.info(f"{config}")
     source_lang_file_path = os.path.join(config.localization_root_path,
                                          generate_localization_file_name(config.source_lang_code,
                                                                          config.file_name_pattern))
-    
+
     logging.info(f'Localizing {source_lang_file_path}')
 
     lock_file_path = create_lock_file_path(config.localization_root_path)
+
+    # TODO: Update this
+    llm_strategy = OpenAiLLMStrategy(model=config.llm_model)
+    llm_context = LLMContext(llm_strategy)
 
     processor = await create_source_processor(llm_context,
                                               source_file_path=source_lang_file_path,
@@ -51,9 +55,5 @@ if __name__ == '__main__':
     parser.add_argument("config_path", help="Path to the YAML configuration file")
     args = parser.parse_args()
 
-    # TODO: Update this
-    llm_strategy = OpenAiLLMStrategy()
-    _llm_context = LLMContext(llm_strategy)
-
     # Run the async main function
-    asyncio.run(main(_llm_context, args.config_path))
+    asyncio.run(main(args.config_path))

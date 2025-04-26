@@ -6,11 +6,15 @@ from abc import ABC, abstractmethod
 import openai
 from google import genai
 from google.genai import types
-from tenacity import retry, stop_after_attempt, wait_exponential, wait_random
+from google.genai.errors import APIError
+from openai import APIStatusError
+from tenacity import retry, stop_after_attempt, wait_exponential, wait_random, retry_if_exception_type
 
 from threepio import envutils
 from threepio.envutils import retrieve_openai_api_key
-from threepio.errors import InvalidLLMOutputError, LLMApiError
+from threepio.errors import InvalidLLMOutputError, LLMApiError, TransientLLMApiError
+
+_NON_RETRYABLE_ERROR_STATUS_CODES = [400, 401, 403, 404, 409, 422]
 
 
 class LLMStrategy(ABC):
@@ -23,7 +27,9 @@ class LLMContext:
     def __init__(self, strategy: LLMStrategy):
         self.strategy = strategy
 
-    @retry(stop=stop_after_attempt(6), wait=wait_exponential(multiplier=5, exp_base=3) + wait_random(min=0, max=2))
+    @retry(stop=stop_after_attempt(6),
+           wait=wait_exponential(multiplier=5, exp_base=3) + wait_random(min=0, max=2),
+           retry=retry_if_exception_type(TransientLLMApiError))
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         """
         :raise InvalidLLMOutputError
@@ -65,9 +71,12 @@ class MockLLMStrategy(LLMStrategy):
 
 
 class GeminiLLMStrategy(LLMStrategy):
-    def __init__(self):
+    def __init__(self, model: str | None = None):
         self.client = genai.Client(api_key=envutils.retrieve_gemini_api_key())
-        self.model = 'gemini-2.0-flash'
+        if not model:
+            self.model = 'gemini-2.0-flash'
+        else:
+            self.model = model
         self.temperature = 0
 
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
@@ -78,6 +87,11 @@ class GeminiLLMStrategy(LLMStrategy):
                 contents=user_prompt,
                 config=config
             )
+        except APIError as e:
+            if e.code in _NON_RETRYABLE_ERROR_STATUS_CODES:
+                raise LLMApiError
+            else:
+                raise TransientLLMApiError
         except Exception as e:
             raise LLMApiError from e
 
@@ -95,9 +109,12 @@ class GeminiLLMStrategy(LLMStrategy):
 
 
 class OpenAiLLMStrategy(LLMStrategy):
-    def __init__(self):
+    def __init__(self, model: str | None = None):
         self.client = openai.AsyncClient(api_key=retrieve_openai_api_key())
-        self.model = 'gpt-4.1-mini'
+        if not model:
+            self.model = 'gpt-4.1-mini'
+        else:
+            self.model = model
         self.temperature = 0
 
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
@@ -108,6 +125,12 @@ class OpenAiLLMStrategy(LLMStrategy):
                 input=user_prompt,
                 temperature=self.temperature,
             )
+        except APIStatusError as e:
+            if e.status_code in _NON_RETRYABLE_ERROR_STATUS_CODES:
+                raise LLMApiError from e
+            else:
+                raise TransientLLMApiError from e
+
         except Exception as e:
             raise LLMApiError from e
 
