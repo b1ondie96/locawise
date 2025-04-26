@@ -3,11 +3,13 @@ import logging
 import re
 from abc import ABC, abstractmethod
 
+import openai
 from google import genai
 from google.genai import types
-from tenacity import retry, stop_after_attempt, wait_exponential
+from tenacity import retry, stop_after_attempt, wait_exponential, wait_random
 
 from threepio import envutils
+from threepio.envutils import retrieve_openai_api_key
 from threepio.errors import InvalidLLMOutputError, LLMApiError
 
 
@@ -21,7 +23,7 @@ class LLMContext:
     def __init__(self, strategy: LLMStrategy):
         self.strategy = strategy
 
-    @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1.5, exp_base=2))
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1.5, exp_base=2) + wait_random(min=0, max=2))
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         """
         :raise InvalidLLMOutputError
@@ -91,6 +93,31 @@ class GeminiLLMStrategy(LLMStrategy):
                                            system_instruction=system_prompt,
                                            automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True)
                                            )
+
+
+class OpenAiLLMStrategy(LLMStrategy):
+    def __init__(self):
+        self.client = openai.AsyncClient(api_key=retrieve_openai_api_key())
+        self.model = 'gpt-4o'
+        self.temperature = 0.1
+
+    async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
+        try:
+            response = await self.client.responses.create(
+                model=self.model,
+                instructions=system_prompt,
+                input=user_prompt,
+                temperature=self.temperature
+            )
+        except Exception:
+            logging.exception(f'LLM call failed')
+            raise LLMApiError
+
+        try:
+            return _parse_json_text(response.output_text)
+        except Exception:
+            logging.exception(f'{response.text} could not be parsed into a dictionary')
+            raise InvalidLLMOutputError
 
 
 def _extract_json_text(text) -> str:

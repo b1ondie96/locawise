@@ -9,7 +9,7 @@ from localization.config import read_localization_config_yaml
 from localization.format import find_extension
 from lockfile import write_lock_file, create_lock_file_path
 from processor import create_source_processor
-from threepio.llm import GeminiLLMStrategy
+from threepio.llm import OpenAiLLMStrategy
 
 
 async def main(llm_context: LLMContext, config_path: str):
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # TODO: Update this
-    llm_strategy = GeminiLLMStrategy()
+    llm_strategy = OpenAiLLMStrategy()
     _llm_context = LLMContext(llm_strategy)
 
     # Run the async main function
