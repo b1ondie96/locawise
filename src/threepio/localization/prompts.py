@@ -72,6 +72,7 @@ Before outputting the final result, check if the keys match with the input keys.
 between keys, fix it.
 
 The output can be in any language. Make sure you support all UTF-8 characters.
+Make sure you enclose strings with double quotes.
 
 Example input:
 

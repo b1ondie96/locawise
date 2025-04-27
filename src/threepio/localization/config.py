@@ -19,6 +19,7 @@ class LocalizationConfig(BaseModel):
     glossary: dict[str, str] = {}
     tone: str = ''
     llm_model: str | None = None
+    llm_location: str | None = None
 
     @model_validator(mode='after')
     def validate_lang_codes(self) -> Self:

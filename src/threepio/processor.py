@@ -133,7 +133,7 @@ async def generate_localized_dictionary(
                                      context=context,
                                      tone=tone,
                                      glossary=glossary,
-                                     chunk_size=400)
+                                     chunk_size=100)
     target_dict.update(localized_pairs)
 
     return target_dict

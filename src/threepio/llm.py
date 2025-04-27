@@ -7,11 +7,12 @@ import openai
 from google import genai
 from google.genai import types
 from google.genai.errors import APIError
+from google.oauth2.service_account import Credentials
 from openai import APIStatusError
 from tenacity import retry, stop_after_attempt, wait_exponential, wait_random, retry_if_exception_type
 
 from threepio import envutils
-from threepio.envutils import retrieve_openai_api_key
+from threepio.envutils import retrieve_openai_api_key, retrieve_gemini_api_key
 from threepio.errors import InvalidLLMOutputError, LLMApiError, TransientLLMApiError
 
 _NON_RETRYABLE_ERROR_STATUS_CODES = [400, 401, 403, 404, 409, 422]
@@ -71,13 +72,22 @@ class MockLLMStrategy(LLMStrategy):
 
 
 class GeminiLLMStrategy(LLMStrategy):
-    def __init__(self, model: str | None = None):
-        self.client = genai.Client(api_key=envutils.retrieve_gemini_api_key())
+    def __init__(self, model: str | None = None, location: str | None = None):
         if not model:
             self.model = 'gemini-2.0-flash'
         else:
             self.model = model
+
         self.temperature = 0
+
+        if not location:
+            self.location = 'europe-west1'
+        else:
+            self.location = location
+
+        base64_encoded_json_key = envutils.retrieve_gemini_api_key()
+        credentials: Credentials = envutils.generate_vertex_ai_credentials_from_base64(base64_encoded_json_key)
+        self.client = genai.Client(vertexai=True, credentials=credentials, location=self.location)
 
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         config = self._create_config(system_prompt)
@@ -100,7 +110,9 @@ class GeminiLLMStrategy(LLMStrategy):
     def _create_config(self, system_prompt):
         return types.GenerateContentConfig(temperature=self.temperature,
                                            system_instruction=system_prompt,
-                                           automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True)
+                                           automatic_function_calling=types.AutomaticFunctionCallingConfig(
+                                               disable=True),
+                                           top_p=0.2
                                            )
 
 
@@ -149,7 +161,23 @@ def _parse_json_text(text: str) -> dict[str, str]:
             json_text: str = _extract_json_text(text)
         return json.loads(json_text)
     except Exception as e:
-        logging.error("Invalid LLM output.")
-        logging.error('Invalid LLM output. This generally happens when you use a "dumber" LLM model. Please change '
+        logging.error(f"{text} could not be parsed into dictionary.")
+        logging.error('Invalid LLM output. This generally happens when you use a "dumber" LLM model or '
+                      'a model with low maximum output tokens. Please change '
                       'the LLM model.')
         raise InvalidLLMOutputError from e
+
+
+def create_strategy(model: str | None, location: str | None) -> LLMStrategy:
+    openai_key = retrieve_openai_api_key()
+    if openai_key:
+        return OpenAiLLMStrategy(model=model)
+
+    vertex_ai_key = retrieve_gemini_api_key()
+    if vertex_ai_key:
+        return GeminiLLMStrategy(model=model, location=location)
+
+    logging.error("No environment variables found for any supported LLM providers. Please add the necessary "
+                  "environment variables.")
+
+    raise ValueError('No environment variables found for LLM providers.')

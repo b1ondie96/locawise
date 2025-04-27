@@ -4,11 +4,10 @@ import logging
 import os
 
 from envutils import generate_localization_file_name
-from llm import LLMContext
+from llm import LLMContext, create_strategy
 from localization.config import read_localization_config_yaml
 from lockfile import write_lock_file, create_lock_file_path
 from processor import create_source_processor
-from threepio.llm import OpenAiLLMStrategy
 
 
 async def main(config_path: str):
@@ -22,8 +21,7 @@ async def main(config_path: str):
 
     lock_file_path = create_lock_file_path(config.localization_root_path)
 
-    # TODO: Update this
-    llm_strategy = OpenAiLLMStrategy(model=config.llm_model)
+    llm_strategy = create_strategy(model=config.llm_model, location=config.llm_location)
     llm_context = LLMContext(llm_strategy)
 
     processor = await create_source_processor(llm_context,
@@ -41,7 +39,7 @@ async def main(config_path: str):
                 tg.create_task(processor.localize_to_target_language(target_path, target_lang_code))
 
             tg.create_task(write_lock_file(lock_file_path, processor.source_dict))
-            logging.info('All tasks have finished.')
+        logging.info('All tasks have finished.')
     except* (Exception,):
         logging.error("An error occurred. Localization has failed. Please retry.")
 
