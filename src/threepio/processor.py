@@ -59,6 +59,12 @@ class SourceProcessor:
                                                               context=self.context,
                                                               tone=self.tone,
                                                               glossary=self.glossary)
+
+            # target might have outdated keys
+            extra_keys = (target_dict.keys() - self.source_dict.keys())
+            for key in extra_keys:
+                target_dict.pop(key)
+
             await serialize_and_save(target_dict, target_path)
         except LocalizationFileAlreadyUpToDateError:
             logging.info(f'Localization is already up to date for {target_lang_code}')
