@@ -95,11 +95,7 @@ class GeminiLLMStrategy(LLMStrategy):
         except Exception as e:
             raise LLMApiError from e
 
-        try:
-            return _parse_json_text(response.text)
-        except Exception as e:
-            logging.error(f'{response.text} could not be parsed into a dictionary')
-            raise InvalidLLMOutputError from e
+        return _parse_json_text(response.text)
 
     def _create_config(self, system_prompt):
         return types.GenerateContentConfig(temperature=self.temperature,
@@ -129,16 +125,13 @@ class OpenAiLLMStrategy(LLMStrategy):
             if e.status_code in _NON_RETRYABLE_ERROR_STATUS_CODES:
                 raise LLMApiError from e
             else:
+                logging.warn(f"Transient llm api error occurred. status={e.status_code}")
                 raise TransientLLMApiError from e
 
         except Exception as e:
             raise LLMApiError from e
 
-        try:
-            return _parse_json_text(response.output_text)
-        except Exception as e:
-            logging.error(f'{response.output_text} could not be parsed into a dictionary')
-            raise InvalidLLMOutputError from e
+        return _parse_json_text(response.output_text)
 
 
 def _extract_json_text(text) -> str:
@@ -150,8 +143,13 @@ def _extract_json_text(text) -> str:
 
 
 def _parse_json_text(text: str) -> dict[str, str]:
-    json_text: str = text
-    if text.strip().startswith('```json'):
-        json_text: str = _extract_json_text(text)
-
-    return json.loads(json_text)
+    try:
+        json_text: str = text
+        if text.strip().startswith('```json'):
+            json_text: str = _extract_json_text(text)
+        return json.loads(json_text)
+    except Exception as e:
+        logging.error("Invalid LLM output.")
+        logging.error('Invalid LLM output. This generally happens when you use a "dumber" LLM model. Please change '
+                      'the LLM model.')
+        raise InvalidLLMOutputError from e

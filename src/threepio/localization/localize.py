@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 from threepio.dictutils import chunk_dict, simple_union
-from threepio.errors import LLMApiError, InvalidLLMOutputError, LocalizationError
+from threepio.errors import LocalizationError
 from threepio.llm import LLMContext
 from threepio.localization.prompts import generate_system_prompt, generate_user_prompt
 
@@ -27,11 +27,9 @@ async def localize(llm_context: LLMContext,
                 logging.info(f"Generating task for chunk {index + 1}/{len(chunks)} for {target_language}")
                 user_prompt = generate_user_prompt(chunk, target_language)
                 tasks.append(tg.create_task(llm_context.call(system_prompt, user_prompt)))
-    except* (LLMApiError, InvalidLLMOutputError):
-        logging.warning(f"Translation failed.")
-        raise LocalizationError
-    except* Exception:
-        raise LocalizationError
+    except* (Exception,) as e:
+        logging.exception(f"Localization failed.")
+        raise LocalizationError from e
 
     results = [task.result() for task in tasks]
     return simple_union(*results)
