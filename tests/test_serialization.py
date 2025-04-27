@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from threepio.localization.format import LocalizationFormat
 from threepio.serialization import serialize_to_properties_format, serialize
 
@@ -27,16 +29,15 @@ def test_serialize_to_properties_format_single_pair():
 
 
 def test_serialize_to_properties_format_multiple_pairs():
-    input_map = {
-        'age': '19',
-        'message': 'I love world',
-        'location': 'frankfurt  ',
-        'distance': '150',
-        'presence': '',
-    }
+    input_map = OrderedDict()
+    input_map['age'] = '19'
+    input_map['message'] = 'I love world'
+    input_map['location'] = 'frankfurt  '
+    input_map['distance'] = '150'
+    input_map['presence'] = ''
 
     result = serialize_to_properties_format(input_map)
-    assert result == 'age=19\ndistance=150\nlocation=frankfurt  \nmessage=I love world\npresence=\n'
+    assert result == 'age=19\nmessage=I love world\nlocation=frankfurt  \ndistance=150\npresence=\n'
 
 
 def test_serialize_to_properties_format_multilines():
@@ -45,9 +46,15 @@ def test_serialize_to_properties_format_multilines():
         'message': 'Long message\nwith new lines\nMany lines\n',
         'location': 'frankfurt  ',
     }
+
+    input_map = OrderedDict()
+    input_map['description'] = 'This is a test\nwith multiple lines'
+    input_map['message'] = 'Long message\nwith new lines\nMany lines\n'
+    input_map['location'] = 'frankfurt  '
+
     expected = """description=This is a test\\nwith multiple lines
-location=frankfurt  
 message=Long message\\nwith new lines\\nMany lines\\n
+location=frankfurt  
 """
 
     result = serialize_to_properties_format(input_map)

@@ -6,7 +6,7 @@ def generate_user_prompt(pairs: dict[str, str], target_language: str):
 Translate the following values to {target_language} according to the criteria you were given.
 
 Input:
-{json.dumps(pairs, sort_keys=True, ensure_ascii=False, indent=4)}
+{json.dumps(pairs, sort_keys=False, ensure_ascii=False, indent=4)}
 Target Language:
 {target_language}
 

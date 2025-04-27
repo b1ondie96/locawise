@@ -1,4 +1,5 @@
 import logging
+from collections import OrderedDict
 
 from threepio import parsing
 from threepio.dictutils import unsafe_subdict
@@ -70,7 +71,11 @@ class SourceProcessor:
                 logging.error(f"There are missing keys: {missing_keys}")
                 raise LocalizationError("Found missing keys.")
 
-            await serialize_and_save(target_dict, target_path)
+            ordered_target_dict = OrderedDict()
+            for k, _ in self.source_dict.items():
+                ordered_target_dict[k] = target_dict[k]
+
+            await serialize_and_save(ordered_target_dict, target_path)
         except LocalizationFileAlreadyUpToDateError:
             logging.info(f'Localization is already up to date for {target_lang_code}')
 

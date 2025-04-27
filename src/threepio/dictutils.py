@@ -1,4 +1,5 @@
 import itertools
+from collections import OrderedDict
 from itertools import batched
 from typing import Any
 
@@ -40,7 +41,7 @@ def flatten_dict(_dict: dict[str, Any], level_separator: str = '_/') -> dict[str
 
 
 def unflatten_dict(_dict: dict[str, str], level_separator: str = '_/') -> dict[str, Any]:
-    result: dict[str, Any] = {}
+    result = OrderedDict()
     for k, v in _dict.items():
         nodes = k.split(level_separator)
 
@@ -52,7 +53,7 @@ def unflatten_dict(_dict: dict[str, str], level_separator: str = '_/') -> dict[s
             else:
                 temp = leaf_dict.get(node)
                 if temp is None:
-                    leaf_dict[node] = {}
+                    leaf_dict[node] = OrderedDict()
 
                 leaf_dict = leaf_dict[node]
 

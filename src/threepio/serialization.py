@@ -47,18 +47,21 @@ def serialize_to_properties_format(key_value_map: dict[str, str]) -> str:
             encoding = 'utf-8'
             properties = jproperties.Properties()
             properties.properties = key_value_map
+            for k, _ in key_value_map.items():
+                properties._key_order.append(k)
             properties.store(output_stream, encoding=encoding, strict=True, strip_meta=True, timestamp=False)
             binary_content: bytes = output_stream.getvalue()
 
             # Convert to string using the same encoding that was used for writing
             return binary_content.decode(encoding=encoding)
     except Exception as e:
+        logging.exception("Could not serialize to properties format")
         raise SerializationError from e
 
 
 def serialize_to_json(key_value_map: dict[str, str]) -> str:
     try:
         _dict = unflatten_dict(key_value_map)
-        return json.dumps(_dict, sort_keys=True, ensure_ascii=False, indent=4)
+        return json.dumps(_dict, ensure_ascii=False, indent=2)
     except Exception as e:
         raise SerializationError from e

@@ -10,8 +10,8 @@ from threepio.serialization import serialize_and_save
 @pytest.mark.asyncio
 @pytest.mark.parametrize("data, expected", [
     ({'a': 'a1', 'b': 'b1'}, 'a=a1\nb=b1\n'),
-    ({'b': 'b1', 'a': 'a1'}, 'a=a1\nb=b1\n'),
-    ({'c': 'c1', 'b': 'b1', 'a': 'a1'}, 'a=a1\nb=b1\nc=c1\n'),
+    ({'b': 'b1', 'a': 'a1'}, 'b=b1\na=a1\n'),
+    ({'c': 'c1', 'b': 'b1', 'a': 'a1'}, 'c=c1\nb=b1\na=a1\n'),
     ({'b': 'b1'}, 'b=b1\n'),
     ({}, ''),
 ])

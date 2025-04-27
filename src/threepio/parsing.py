@@ -1,5 +1,6 @@
 import json
 import logging
+from collections import OrderedDict
 
 import jproperties
 
@@ -43,7 +44,11 @@ async def parse_java_properties_file(file_content: str) -> dict[str, str]:
     try:
         p = jproperties.Properties()
         p.load(file_content, encoding='UTF-8')
-        return p.properties
+        ordered_dict = OrderedDict()
+        for k, v in p.items():
+            value, _ = v
+            ordered_dict[k] = value
+        return ordered_dict
     except Exception as e:
         raise ParseError("Java properties file could not be parsed") from e
 
