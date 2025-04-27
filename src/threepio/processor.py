@@ -3,7 +3,7 @@ import logging
 from threepio import parsing
 from threepio.dictutils import unsafe_subdict
 from threepio.diffutils import retrieve_keys_to_be_localized, retrieve_nom_source_keys
-from threepio.errors import LocalizationFileAlreadyUpToDateError
+from threepio.errors import LocalizationFileAlreadyUpToDateError, LocalizationError
 from threepio.langutils import is_valid_two_letter_lang_code, retrieve_lang_full_name
 from threepio.llm import LLMContext
 from threepio.localization import localize
@@ -64,6 +64,11 @@ class SourceProcessor:
             extra_keys = (target_dict.keys() - self.source_dict.keys())
             for key in extra_keys:
                 target_dict.pop(key)
+
+            missing_keys = self.source_dict.keys() - target_dict.keys()
+            if missing_keys:
+                logging.error(f"There are missing keys: {missing_keys}")
+                raise LocalizationError("Found missing keys.")
 
             await serialize_and_save(target_dict, target_path)
         except LocalizationFileAlreadyUpToDateError:

@@ -11,7 +11,7 @@ from google.genai.errors import APIError
 from google.oauth2.service_account import Credentials
 from openai import APIStatusError, OpenAIError
 from tenacity import retry, stop_after_attempt, retry_if_exception_type, \
-    wait_random_exponential, before_log
+    wait_random_exponential
 
 from threepio import envutils
 from threepio.envutils import retrieve_openai_api_key, retrieve_gemini_api_key
@@ -32,7 +32,7 @@ class LLMContext:
 
     @retry(stop=stop_after_attempt(8),
            wait=wait_random_exponential(multiplier=5, exp_base=3, max=300, min=15),
-           retry=retry_if_exception_type(TransientLLMApiError),)
+           retry=retry_if_exception_type(TransientLLMApiError), )
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         """
         :raise InvalidLLMOutputError
