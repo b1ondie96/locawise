@@ -24,7 +24,7 @@ async def localize(llm_context: LLMContext,
     try:
         async with asyncio.TaskGroup() as tg:
             for index, chunk in enumerate(chunks):
-                logging.info(f"Generating task for chunk {index + 1}/{len(chunks)} for {target_language}")
+                logging.debug(f"Generating task for chunk {index + 1}/{len(chunks)} for {target_language}")
                 user_prompt = generate_user_prompt(chunk, target_language)
                 tasks.append(tg.create_task(llm_context.call(system_prompt, user_prompt)))
     except* (Exception,) as e:

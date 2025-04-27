@@ -3,13 +3,15 @@ import logging
 import re
 from abc import ABC, abstractmethod
 
+import httpx
 import openai
 from google import genai
 from google.genai import types
 from google.genai.errors import APIError
 from google.oauth2.service_account import Credentials
-from openai import APIStatusError
-from tenacity import retry, stop_after_attempt, wait_exponential, wait_random, retry_if_exception_type
+from openai import APIStatusError, OpenAIError
+from tenacity import retry, stop_after_attempt, retry_if_exception_type, \
+    wait_random_exponential, before_log
 
 from threepio import envutils
 from threepio.envutils import retrieve_openai_api_key, retrieve_gemini_api_key
@@ -28,9 +30,9 @@ class LLMContext:
     def __init__(self, strategy: LLMStrategy):
         self.strategy = strategy
 
-    @retry(stop=stop_after_attempt(6),
-           wait=wait_exponential(multiplier=5, exp_base=3) + wait_random(min=0, max=2),
-           retry=retry_if_exception_type(TransientLLMApiError))
+    @retry(stop=stop_after_attempt(8),
+           wait=wait_random_exponential(multiplier=5, exp_base=3, max=300, min=15),
+           retry=retry_if_exception_type(TransientLLMApiError),)
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         """
         :raise InvalidLLMOutputError
@@ -118,7 +120,8 @@ class GeminiLLMStrategy(LLMStrategy):
 
 class OpenAiLLMStrategy(LLMStrategy):
     def __init__(self, model: str | None = None):
-        self.client = openai.AsyncClient(api_key=retrieve_openai_api_key())
+        self.client = openai.AsyncClient(api_key=retrieve_openai_api_key(), max_retries=0,
+                                         timeout=httpx.Timeout(600, connect=10))
         if not model:
             self.model = 'gpt-4.1-mini'
         else:
@@ -139,7 +142,8 @@ class OpenAiLLMStrategy(LLMStrategy):
             else:
                 logging.warn(f"Transient llm api error occurred. status={e.status_code}")
                 raise TransientLLMApiError from e
-
+        except OpenAIError as e:
+            raise TransientLLMApiError from e
         except Exception as e:
             raise LLMApiError from e
 
