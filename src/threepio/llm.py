@@ -21,6 +21,9 @@ _NON_RETRYABLE_ERROR_STATUS_CODES = [400, 401, 403, 404, 409, 422]
 
 
 class LLMStrategy(ABC):
+    @retry(stop=stop_after_attempt(8),
+           wait=wait_random_exponential(multiplier=5, exp_base=3, max=300, min=15),
+           retry=retry_if_exception_type(TransientLLMApiError))
     @abstractmethod
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         pass
@@ -30,15 +33,16 @@ class LLMContext:
     def __init__(self, strategy: LLMStrategy):
         self.strategy = strategy
 
-    @retry(stop=stop_after_attempt(8),
-           wait=wait_random_exponential(multiplier=5, exp_base=3, max=300, min=15),
-           retry=retry_if_exception_type(TransientLLMApiError), )
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         """
         :raise InvalidLLMOutputError
         :raise LLMApiError
          """
-        return await self.strategy.call(system_prompt, user_prompt)
+        try:
+            return await self.strategy.call(system_prompt, user_prompt)
+        except TransientLLMApiError:
+            logging.exception("TransientLLMApiError occurred")
+            raise
 
 
 class MockLLMStrategy(LLMStrategy):
@@ -101,10 +105,12 @@ class GeminiLLMStrategy(LLMStrategy):
             )
         except APIError as e:
             if e.code in _NON_RETRYABLE_ERROR_STATUS_CODES:
+                logging.exception("A non retryable GeminiAPI error occurred.")
                 raise LLMApiError
             else:
                 raise TransientLLMApiError
         except Exception as e:
+            logging.exception("An unknown GeminiAPI error occurred.")
             raise LLMApiError from e
 
         return _parse_json_text(response.text)
@@ -114,8 +120,7 @@ class GeminiLLMStrategy(LLMStrategy):
                                            system_instruction=system_prompt,
                                            automatic_function_calling=types.AutomaticFunctionCallingConfig(
                                                disable=True),
-                                           top_p=0.2
-                                           )
+                                           top_p=0.2)
 
 
 class OpenAiLLMStrategy(LLMStrategy):
@@ -138,13 +143,15 @@ class OpenAiLLMStrategy(LLMStrategy):
             )
         except APIStatusError as e:
             if e.status_code in _NON_RETRYABLE_ERROR_STATUS_CODES:
+                logging.exception("A non-retryable APIStatusException exception occurred")
                 raise LLMApiError from e
             else:
-                logging.warn(f"Transient llm api error occurred. status={e.status_code}")
+                logging.warning(f"Transient llm api error occurred. status={e.status_code}")
                 raise TransientLLMApiError from e
         except OpenAIError as e:
             raise TransientLLMApiError from e
         except Exception as e:
+            logging.exception("An unknown exception occurred")
             raise LLMApiError from e
 
         return _parse_json_text(response.output_text)
@@ -165,7 +172,7 @@ def _parse_json_text(text: str) -> dict[str, str]:
             json_text: str = _extract_json_text(text)
         return json.loads(json_text)
     except Exception as e:
-        logging.error(f"{text} could not be parsed into dictionary.")
+        logging.exception(f"{text} could not be parsed into dictionary.")
         logging.error('Invalid LLM output. This generally happens when you use a "dumber" LLM model or '
                       'a model with low maximum output tokens. Please change '
                       'the LLM model.')

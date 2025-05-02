@@ -6,24 +6,24 @@ import os
 from envutils import generate_localization_file_name
 from llm import LLMContext, create_strategy
 from localization.config import read_localization_config_yaml
-from lockfile import write_lock_file, create_lock_file_path
+from lockfile import write_lock_file
 from processor import create_source_processor
 
 
 async def main(config_path: str):
     config = await read_localization_config_yaml(config_path)
-    logging.info(f"{config}")
-    source_lang_file_path = os.path.join(config.localization_root_path,
-                                         generate_localization_file_name(config.source_lang_code,
-                                                                         config.file_name_pattern))
+    config_directory = os.path.dirname(os.path.abspath(config_path))
+    logging.info(f'Setting current working directory to {config_directory}')
+    os.chdir(config_directory)
 
+    source_lang_file_name = generate_localization_file_name(config.source_lang_code, config.file_name_pattern)
+    source_lang_file_path = os.path.join(config_directory, config.localization_root_path, source_lang_file_name)
     logging.info(f'Localizing {source_lang_file_path}')
-
-    lock_file_path = create_lock_file_path(config.localization_root_path)
 
     llm_strategy = create_strategy(model=config.llm_model, location=config.llm_location)
     llm_context = LLMContext(llm_strategy)
-
+    lock_file_name = 'i18n.lock'
+    lock_file_path = os.path.join(config_directory, config.localization_root_path, lock_file_name)
     processor = await create_source_processor(llm_context,
                                               source_file_path=source_lang_file_path,
                                               lock_file_path=lock_file_path,
@@ -35,7 +35,7 @@ async def main(config_path: str):
             for target_lang_code in config.target_lang_codes:
                 logging.info(f'Creating task for {target_lang_code}')
                 target_file_name = generate_localization_file_name(target_lang_code, config.file_name_pattern)
-                target_path = os.path.join(config.localization_root_path, target_file_name)
+                target_path = os.path.join(config_directory, config.localization_root_path, target_file_name)
                 tg.create_task(processor.localize_to_target_language(target_path, target_lang_code))
 
             tg.create_task(write_lock_file(lock_file_path, processor.source_dict))

@@ -3,7 +3,7 @@ from tenacity import wait_none
 
 from threepio import llm
 from threepio.errors import LocalizationError
-from threepio.llm import LLMContext
+from threepio.llm import LLMContext, LLMStrategy
 from threepio.localization import localize
 
 
@@ -59,7 +59,7 @@ async def test_localize_with_mock_strategy_and_llm_api_error(monkeypatch):
     }
     target_language = 'en'
 
-    monkeypatch.setattr(LLMContext.call.retry, "wait", wait_none())
+    monkeypatch.setattr(LLMStrategy.call.retry, "wait", wait_none())
 
     with pytest.raises(LocalizationError):
         await localize(context, pairs, target_language, chunk_size=1)
@@ -80,7 +80,7 @@ async def test_localize_with_mock_strategy_and_invalid_llm_output_error(monkeypa
     }
     target_language = 'en'
 
-    monkeypatch.setattr(LLMContext.call.retry, "wait", wait_none())
+    monkeypatch.setattr(LLMStrategy.call.retry, "wait", wait_none())
 
     with pytest.raises(LocalizationError):
         await localize(context, pairs, target_language, chunk_size=2)

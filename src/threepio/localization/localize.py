@@ -28,7 +28,7 @@ async def localize(llm_context: LLMContext,
                 user_prompt = generate_user_prompt(chunk, target_language)
                 tasks.append(tg.create_task(llm_context.call(system_prompt, user_prompt)))
     except* (Exception,) as e:
-        logging.exception(f"Localization failed.")
+        logging.error(f"Localization failed.")
         raise LocalizationError from e
 
     results = [task.result() for task in tasks]

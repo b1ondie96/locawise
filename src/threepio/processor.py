@@ -42,7 +42,7 @@ class SourceProcessor:
         :raises LocalizationFailedError:
         :raises FileSaveError: error while saving to the target file
         """
-        logging.info(f'Localizing to target language {target_path} {target_lang_code}')
+        logging.info(f'Localizing to target language path={target_path} lang={target_lang_code}')
         if not target_path.strip():
             raise ValueError("Target path cannot be empty")
 
