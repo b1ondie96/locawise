@@ -3,14 +3,26 @@ import asyncio
 import logging
 import os
 
-from envutils import generate_localization_file_name
-from llm import LLMContext, create_strategy
-from localization.config import read_localization_config_yaml
-from lockfile import write_lock_file
-from processor import create_source_processor
+from threepio.envutils import generate_localization_file_name
+from threepio.llm import LLMContext, create_strategy
+from threepio.localization.config import read_localization_config_yaml
+from threepio.lockfile import write_lock_file
+from threepio.processor import create_source_processor
 
 
-async def main(config_path: str):
+async def main():
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+    parser = argparse.ArgumentParser(
+        description='Process localization files based on configuration.',
+        epilog='Example: python3 main.py config.yaml'
+    )
+    parser.add_argument("config_path", help="Path to the YAML configuration file")
+    args = parser.parse_args()
+
+    # Run the async main function
+    config_path = args.config_path
+
     config = await read_localization_config_yaml(config_path)
     config_directory = os.path.dirname(os.path.abspath(config_path))
     logging.info(f'Setting current working directory to {config_directory}')
@@ -44,15 +56,5 @@ async def main(config_path: str):
         logging.error("An error occurred. Localization has failed. Please retry.")
 
 
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-    parser = argparse.ArgumentParser(
-        description='Process localization files based on configuration.',
-        epilog='Example: python3 main.py config.yaml'
-    )
-    parser.add_argument("config_path", help="Path to the YAML configuration file")
-    args = parser.parse_args()
-
-    # Run the async main function
-    asyncio.run(main(args.config_path))
+if __name__ == "__main__":
+    asyncio.run(main())
