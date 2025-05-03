@@ -8,13 +8,11 @@ import openai
 from google import genai
 from google.genai import types
 from google.genai.errors import APIError
-from google.oauth2.service_account import Credentials
 from openai import APIStatusError, OpenAIError
 from tenacity import retry, stop_after_attempt, retry_if_exception_type, \
     wait_random_exponential
 
-from threepio import envutils
-from threepio.envutils import retrieve_openai_api_key, retrieve_gemini_api_key
+from threepio.envutils import retrieve_openai_api_key
 from threepio.errors import InvalidLLMOutputError, LLMApiError, TransientLLMApiError
 
 _NON_RETRYABLE_ERROR_STATUS_CODES = [400, 401, 403, 404, 409, 422]
@@ -91,9 +89,7 @@ class GeminiLLMStrategy(LLMStrategy):
         else:
             self.location = location
 
-        base64_encoded_json_key = envutils.retrieve_gemini_api_key()
-        credentials: Credentials = envutils.generate_vertex_ai_credentials_from_base64(base64_encoded_json_key)
-        self.client = genai.Client(vertexai=True, credentials=credentials, location=self.location)
+        self.client = genai.Client(vertexai=True, location=self.location)
 
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         config = self._create_config(system_prompt)
@@ -119,8 +115,7 @@ class GeminiLLMStrategy(LLMStrategy):
         return types.GenerateContentConfig(temperature=self.temperature,
                                            system_instruction=system_prompt,
                                            automatic_function_calling=types.AutomaticFunctionCallingConfig(
-                                               disable=True),
-                                           top_p=0.2)
+                                               disable=True))
 
 
 class OpenAiLLMStrategy(LLMStrategy):
@@ -184,11 +179,9 @@ def create_strategy(model: str | None, location: str | None) -> LLMStrategy:
     if openai_key:
         return OpenAiLLMStrategy(model=model)
 
-    vertex_ai_key = retrieve_gemini_api_key()
-    if vertex_ai_key:
+    try:
         return GeminiLLMStrategy(model=model, location=location)
-
-    logging.error("No environment variables found for any supported LLM providers. Please add the necessary "
-                  "environment variables.")
-
-    raise ValueError('No environment variables found for LLM providers.')
+    except (Exception,):
+        logging.error("No environment variables found for any supported LLM providers. Please add the necessary "
+                      "environment variables.")
+        raise ValueError('No environment variables found for LLM providers.')
