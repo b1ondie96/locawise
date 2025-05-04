@@ -1,6 +1,6 @@
 [project]
 name = "threepio"
-version = "0.1.0"
+version = "1.0.0"
 description = ""
 authors = [
     {name = "Emre Safak",email = "aemresafak@gmail.com"}
