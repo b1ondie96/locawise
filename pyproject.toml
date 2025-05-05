@@ -1,6 +1,6 @@
 [project]
-name = "threepio"
-version = "1.0.0"
+name = "locawise"
+version = "1.0.0-beta"
 description = ""
 authors = [
     {name = "Emre Safak",email = "aemresafak@gmail.com"}
@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 [tool.poetry]
-packages = [{include = "threepio", from = "src"}]
+packages = [{include = "locawise", from = "src"}]
 
 
 [build-system]

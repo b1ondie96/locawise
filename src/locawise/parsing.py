@@ -4,10 +4,10 @@ from collections import OrderedDict
 
 import jproperties
 
-from threepio.dictutils import flatten_dict
-from threepio.errors import ParseError
-from threepio.fileutils import read_file
-from threepio.localization.format import detect_format, LocalizationFormat
+from locawise.dictutils import flatten_dict
+from locawise.errors import ParseError
+from locawise.fileutils import read_file
+from locawise.localization.format import detect_format, LocalizationFormat
 
 
 async def parse(file_path: str) -> dict[str, str]:

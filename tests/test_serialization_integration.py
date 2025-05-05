@@ -3,8 +3,8 @@ import os
 import pytest
 from aiofiles import tempfile
 
-from threepio.fileutils import read_file
-from threepio.serialization import serialize_and_save
+from locawise.fileutils import read_file
+from locawise.serialization import serialize_and_save
 
 
 @pytest.mark.asyncio

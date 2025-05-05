@@ -1,4 +1,4 @@
-from threepio.lockfile import hash_key_value_pair
+from locawise.lockfile import hash_key_value_pair
 
 
 def retrieve_nom_source_keys(key_value_hashes: set[str], source_dict: dict[str, str]) -> set[str]:

@@ -1,10 +1,10 @@
 import pytest
 from tenacity import wait_none
 
-from threepio import llm
-from threepio.errors import LocalizationError
-from threepio.llm import LLMContext, LLMStrategy
-from threepio.localization import localize
+from locawise import llm
+from locawise.errors import LocalizationError
+from locawise.llm import LLMContext, LLMStrategy
+from locawise.localization import localize
 
 
 @pytest.mark.asyncio

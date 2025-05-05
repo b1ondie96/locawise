@@ -4,10 +4,10 @@ import logging
 
 import jproperties
 
-from threepio.dictutils import unflatten_dict
-from threepio.errors import FileSaveError, SerializationError
-from threepio.fileutils import write_to_file
-from threepio.localization.format import LocalizationFormat, detect_format
+from locawise.dictutils import unflatten_dict
+from locawise.errors import FileSaveError, SerializationError
+from locawise.fileutils import write_to_file
+from locawise.localization.format import LocalizationFormat, detect_format
 
 
 async def serialize_and_save(key_value_pairs: dict[str, str], target_path: str):

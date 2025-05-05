@@ -6,9 +6,9 @@ import pytest
 from aiofiles import tempfile
 
 from tests.utils import compare_ignoring_white_space
-from threepio.fileutils import read_file, write_to_file
-from threepio.llm import MockLLMStrategy, LLMContext
-from threepio.processor import SourceProcessor
+from locawise.fileutils import read_file, write_to_file
+from locawise.llm import MockLLMStrategy, LLMContext
+from locawise.processor import SourceProcessor
 
 
 @pytest.fixture

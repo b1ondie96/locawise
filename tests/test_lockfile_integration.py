@@ -1,6 +1,6 @@
 import pytest
 
-from threepio.lockfile import read_lock_file
+from locawise.lockfile import read_lock_file
 from tests.utils import get_absolute_path
 
 

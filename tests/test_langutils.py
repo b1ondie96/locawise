@@ -1,6 +1,6 @@
 import pytest
 
-from threepio.langutils import is_valid_two_letter_lang_code, retrieve_lang_full_name
+from locawise.langutils import is_valid_two_letter_lang_code, retrieve_lang_full_name
 
 
 @pytest.mark.parametrize('lang_code, expected', [

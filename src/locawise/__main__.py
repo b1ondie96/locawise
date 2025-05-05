@@ -3,11 +3,11 @@ import asyncio
 import logging
 import os
 
-from threepio.envutils import generate_localization_file_name
-from threepio.llm import LLMContext, create_strategy
-from threepio.localization.config import read_localization_config_yaml
-from threepio.lockfile import write_lock_file
-from threepio.processor import create_source_processor
+from locawise.envutils import generate_localization_file_name
+from locawise.llm import LLMContext, create_strategy
+from locawise.localization.config import read_localization_config_yaml
+from locawise.lockfile import write_lock_file
+from locawise.processor import create_source_processor
 
 
 async def main():

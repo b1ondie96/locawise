@@ -1,10 +1,10 @@
 import asyncio
 import logging
 
-from threepio.dictutils import chunk_dict, simple_union
-from threepio.errors import LocalizationError
-from threepio.llm import LLMContext
-from threepio.localization.prompts import generate_system_prompt, generate_user_prompt
+from locawise.dictutils import chunk_dict, simple_union
+from locawise.errors import LocalizationError
+from locawise.llm import LLMContext
+from locawise.localization.prompts import generate_system_prompt, generate_user_prompt
 
 
 async def localize(llm_context: LLMContext,

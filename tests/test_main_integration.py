@@ -1,7 +1,7 @@
 import pytest
 
-from threepio.llm import MockLLMStrategy, LLMContext
-from threepio.processor import generate_localized_dictionary
+from locawise.llm import MockLLMStrategy, LLMContext
+from locawise.processor import generate_localized_dictionary
 from tests.utils import get_absolute_path
 
 

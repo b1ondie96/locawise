@@ -1,7 +1,7 @@
 import pytest
 
-from threepio.dictutils import chunk_dict, simple_union, flatten_dict, unflatten_dict
-from threepio.errors import UnsupportedLocalizationKeyError
+from locawise.dictutils import chunk_dict, simple_union, flatten_dict, unflatten_dict
+from locawise.errors import UnsupportedLocalizationKeyError
 
 
 def test_chunk_dict_empty_dict():

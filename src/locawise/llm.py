@@ -12,8 +12,8 @@ from openai import APIStatusError, OpenAIError
 from tenacity import retry, stop_after_attempt, retry_if_exception_type, \
     wait_random_exponential
 
-from threepio.envutils import retrieve_openai_api_key
-from threepio.errors import InvalidLLMOutputError, LLMApiError, TransientLLMApiError
+from locawise.envutils import retrieve_openai_api_key
+from locawise.errors import InvalidLLMOutputError, LLMApiError, TransientLLMApiError
 
 _NON_RETRYABLE_ERROR_STATUS_CODES = [400, 401, 403, 404, 409, 422]
 

@@ -4,9 +4,9 @@ from typing import Self
 import yaml
 from pydantic import BaseModel, ValidationError, model_validator
 
-from threepio.errors import InvalidYamlConfigError
-from threepio.fileutils import read_file
-from threepio.langutils import is_valid_two_letter_lang_code
+from locawise.errors import InvalidYamlConfigError
+from locawise.fileutils import read_file
+from locawise.langutils import is_valid_two_letter_lang_code
 
 
 class LocalizationConfig(BaseModel):

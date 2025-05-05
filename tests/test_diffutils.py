@@ -1,7 +1,7 @@
 import pytest
 
-from threepio.diffutils import retrieve_nom_source_keys, retrieve_keys_to_be_localized
-from threepio.lockfile import hash_key_value_pair
+from locawise.diffutils import retrieve_nom_source_keys, retrieve_keys_to_be_localized
+from locawise.lockfile import hash_key_value_pair
 
 
 def test_retrieve_nom_source_keys_no_hashes():

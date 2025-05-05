@@ -3,7 +3,7 @@ from collections import OrderedDict
 from itertools import batched
 from typing import Any
 
-from threepio.errors import UnsupportedLocalizationKeyError
+from locawise.errors import UnsupportedLocalizationKeyError
 
 
 def chunk_dict(data, size: int):

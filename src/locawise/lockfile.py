@@ -4,7 +4,7 @@ import os.path
 import aiofiles
 import xxhash
 
-from threepio.fileutils import write_to_file
+from locawise.fileutils import write_to_file
 
 _KEY_VALUE_HASH_LENGTH = 8
 
