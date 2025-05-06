@@ -2,7 +2,7 @@ import logging
 from typing import Self
 
 import yaml
-from pydantic import BaseModel, ValidationError, model_validator
+from pydantic import BaseModel, ValidationError, model_validator, Field, ConfigDict
 
 from locawise.errors import InvalidYamlConfigError
 from locawise.fileutils import read_file
@@ -11,15 +11,20 @@ from locawise.langutils import is_valid_two_letter_lang_code
 
 class LocalizationConfig(BaseModel):
     version: str
-    source_lang_code: str
-    target_lang_codes: set[str] = {}
-    localization_root_path: str = ''
-    file_name_pattern: str = '{language}.{ext}'
-    context: str = ''
-    glossary: dict[str, str] = {}
-    tone: str = ''
-    llm_model: str | None = None
-    llm_location: str | None = None
+    source_lang_code: str = Field(alias="source-lang-code")
+    target_lang_codes: set[str] = Field(default_factory=set, alias="target-lang-codes")
+    localization_root_path: str = Field(default="", alias="localization-root-path")
+    file_name_pattern: str = Field(default="{language}.{ext}", alias="file-name-pattern")
+    context: str = ""
+    glossary: dict[str, str] = Field(default_factory=dict)
+    tone: str = ""
+    llm_model: str | None = Field(default=None, alias="llm-model")
+    llm_location: str | None = Field(default=None, alias="llm-location")
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        validate_by_name=True,  # New name for 'allow_population_by_field_name'
+    )
 
     @model_validator(mode='after')
     def validate_lang_codes(self) -> Self:
