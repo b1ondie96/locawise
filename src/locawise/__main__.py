@@ -12,6 +12,7 @@ from locawise.processor import create_source_processor
 
 async def main():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.getLogger("httpx").setLevel(logging.WARNING)
 
     parser = argparse.ArgumentParser(
         description='Process localization files based on configuration.',
