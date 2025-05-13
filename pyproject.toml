@@ -1,6 +1,6 @@
 [project]
 name = "locawise"
-version = "1.0.0-beta"
+version = "1.0.0"
 description = ""
 authors = [
     {name = "Emre Safak",email = "aemresafak@gmail.com"}
