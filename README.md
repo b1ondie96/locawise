@@ -2,7 +2,7 @@
 
 **Supporting 2 or 3 languages? Support virtually all languages at a coffee price!**
 
-[![PyPI version](https://badge.fury.io/py/locawise.svg)](https://badge.fury.io/py/locawise)
+[![PyPI version](https://badge.fury.io/py/locawise.svg)](https://pypi.org/project/locawise/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python versions](https://img.shields.io/pypi/pyversions/locawise.svg)](https://pypi.org/project/locawise/)
 
