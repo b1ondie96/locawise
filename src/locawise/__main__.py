@@ -31,6 +31,10 @@ async def main():
 
     source_lang_file_name = generate_localization_file_name(config.source_lang_code, config.file_name_pattern)
     source_lang_file_path = os.path.join(config_directory, config.localization_root_path, source_lang_file_name)
+    if not os.path.exists(source_lang_file_path) and 'values-{language}' in config.file_name_pattern:
+        source_lang_file_path = os.path.join(config_directory, config.localization_root_path,
+                                             config.file_name_pattern.replace('values-{language}', 'values'))
+
     logging.info(f'Localizing {source_lang_file_path}')
 
     llm_strategy = create_strategy(model=config.llm_model, location=config.llm_location)
