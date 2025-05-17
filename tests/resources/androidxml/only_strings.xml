@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App name and basic strings -->
+    <string name="app_name">Travel Buddy</string>
+    <string name="welcome_message">Welcome to Travel Buddy!</string>
+    <string name="login_prompt">Please log in to continue</string>
+    <string name="email_hint">Email address</string>
+    <string name="password_hint">Password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="login_button">Log In</string>
+    <string name="signup_prompt">Don\'t have an account? Sign up now</string>
+
+    <!-- Strings with formatting -->
+    <string name="greeting">Hello, %1$s!</string>
+    <string name="last_login">Your &amp;last login was on %1$s at %2$s</string>
+    <string name="temperature">Current temperature: %1$d°C</string>
+
+    <!-- String with HTML formatting -->
+    <string name="terms_conditions">By continuing, you agree to our <b>Terms of Service</b> and <i>Privacy Policy</i></string>
+
+    <!-- String with special character escaping -->
+    <string name="search_query_example">Try searching for \"popular destinations\"</string>
+</resources>

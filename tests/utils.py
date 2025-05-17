@@ -9,3 +9,14 @@ def get_absolute_path(file_path: str) -> str:
 
 def compare_ignoring_white_space(actual: str, expected: str):
     assert remove_all_whitespace(actual) == remove_all_whitespace(expected)
+
+
+def compare_collapsing_tabs_and_new_lines(actual: str, expected: str):
+    assert collapse_tabs_and_new_lines(actual) == collapse_tabs_and_new_lines(expected)
+
+
+def collapse_tabs_and_new_lines(text):
+    # Replace all tabs and newlines with empty strings
+    result = text.replace('\t', '').replace('\n', '')
+
+    return result

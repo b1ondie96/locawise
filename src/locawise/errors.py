@@ -41,3 +41,7 @@ class UnsupportedLocalizationKeyError(Exception):
 
 class LocalizationFileAlreadyUpToDateError(Exception):
     pass
+
+
+class MalformedAndroidStringsXMLError(Exception):
+    pass

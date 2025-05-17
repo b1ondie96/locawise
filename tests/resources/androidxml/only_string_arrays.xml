@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- String Arrays -->
+    <string-array name="travel_categories">
+        <item>Beach Vacations</item>
+        <item>Mountain Retreats</item>
+        <item>City Escapes</item>
+        <item>Cultural Tours</item>
+        <item>Adventure Trips</item>
+        <item>Culinary Journeys</item>
+    </string-array>
+
+    <string-array name="transport_modes">
+        <item>Flight</item>
+        <item>Train</item>
+        <item>Bus</item>
+        <item>Car</item>
+        <item>Cruise</item>
+        <item>Walking Tour</item>
+    </string-array>
+
+    <string-array name="currency_codes">
+        <item>USD</item>
+        <item>EUR</item>
+        <item>GBP</item>
+        <item>JPY</item>
+        <item>AUD</item>
+        <item>CAD</item>
+    </string-array>
+</resources>

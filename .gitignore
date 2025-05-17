@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 .idea
 
+resources/test/generated/
+
 **/.DS_Store
 
 # C extensions

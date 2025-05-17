@@ -4,6 +4,7 @@ from collections import OrderedDict
 
 import jproperties
 
+from locawise.androidutils import parse_xml_string
 from locawise.dictutils import flatten_dict
 from locawise.errors import ParseError
 from locawise.fileutils import read_file
@@ -12,7 +13,6 @@ from locawise.localization.format import detect_format, LocalizationFormat
 
 async def parse(file_path: str) -> dict[str, str]:
     """
-
     :param file_path:
     :return:
     :raises LocalizationFormatError:
@@ -36,6 +36,8 @@ async def parse(file_path: str) -> dict[str, str]:
             return await parse_java_properties_file(file_content)
         case LocalizationFormat.JSON:
             return await parse_json_file(file_content)
+        case LocalizationFormat.XML:
+            return parse_xml_string(file_content)
         case _:
             raise ValueError(f"Parsing is not implemented for format={localization_format}")
 
