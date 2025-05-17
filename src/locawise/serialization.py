@@ -4,6 +4,7 @@ import logging
 
 import jproperties
 
+from locawise.androidutils import serialize_to_xml
 from locawise.dictutils import unflatten_dict
 from locawise.errors import FileSaveError, SerializationError
 from locawise.fileutils import write_to_file
@@ -36,6 +37,8 @@ def serialize(key_value_map: dict[str, str], localization_format: LocalizationFo
             return serialize_to_properties_format(key_value_map)
         case LocalizationFormat.JSON:
             return serialize_to_json(key_value_map)
+        case LocalizationFormat.XML:
+            return serialize_to_xml(key_value_map)
         case _:
             raise ValueError(f"Serialization for {localization_format} is not implemented")
 

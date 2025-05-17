@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App name and basic strings -->
+    <string name="app_name">Travel Buddy Pro</string>
+    <string name="welcome_message">Welcome to Travel Buddy Pro!</string>
+    <string name="app_version">Version 2.5.1</string>
+    <string name="login_prompt">Please log in to continue</string>
+    <string name="email_hint">Email address</string>
+    <string name="password_hint">Password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="login_button">Log In</string>
+    <string name="signup_prompt">Don\'t have an account? Sign up now</string>
+    <string name="logout">Log Out</string>
+    <string name="settings">Settings</string>
+    <string name="help">Help &amp; Support</string>
+
+    <!-- Strings with newlines -->
+    <string name="app_description">Travel Buddy Pro:\nYour ultimate companion\nfor seamless travel experiences</string>
+    <string name="welcome_paragraph">Welcome to Travel Buddy Pro!\n\nWe\'re excited to help you plan your next adventure.\nDiscover amazing destinations and create memories that last a lifetime.</string>
+    <string name="multi_paragraph">Planning your trip has never been easier.\n\nWith our advanced tools, you can:\n- Find the best deals\n- Discover hidden gems\n- Connect with fellow travelers\n\nStart your journey today!</string>
+
+    <!-- Strings with formatting -->
+    <string name="greeting">Hello, %1$s!</string>
+    <string name="last_login">Your last login was on %1$s at %2$s</string>
+    <string name="temperature">Current temperature: %1$d°C</string>
+    <string name="weather_forecast">Today: %1$s, Tomorrow: %2$s</string>
+    <string name="trip_summary">Your %1$s trip to %2$s includes %3$d activities</string>
+    <string name="budget_info">Budget: %1$.2f %2$s - Spent: %3$.2f %2$s</string>
+    <string name="complex_format">Trip #%1$d: %2$s to %3$s (%4$s - %5$s) - %6$.2f %7$s</string>
+    <string name="percentage_complete">Your itinerary is %1$d%% complete</string>
+
+    <!-- String with HTML formatting -->
+    <string name="terms_conditions">By continuing, you agree to our <b>Terms of Service</b> and <i>Privacy Policy</i></string>
+    <string name="premium_features">Unlock <font color="#FFD700">premium features</font> for enhanced travel planning</string>
+    <string name="safety_warning"><font color="#FF0000">Important:</font> Always check <b>travel advisories</b> before booking</string>
+    <string name="html_mix"><b>Bold text</b> with <i>italic</i> and <u>underlined</u> parts mixed with <font color="#00FF00">colored text</font> in a single string</string>
+    <string name="nested_html"><b>Bold text with <i>italic inside bold</i> and more bold</b> followed by regular text</string>
+
+
+    <!-- Empty strings -->
+    <string name="empty_string"></string>
+
+    <!-- Very long string -->
+    <string name="terms_full">This Travel Buddy Pro End User License Agreement (\"Agreement\") is a legal document between you and Travel Buddy Pro, Inc. By downloading, installing, or using this application, you agree to be bound by the terms of this Agreement. This application is licensed, not sold, to you for use strictly in accordance with the terms and conditions of this Agreement. Travel Buddy Pro reserves all rights not expressly granted to you. This is a very long string that continues with many more details about terms and conditions that need to be displayed in the application and properly handled by any parser that might be processing this strings.xml file. The parser should handle strings of arbitrary length without truncation or memory issues.</string>
+
+    <!-- String Arrays -->
+    <string-array name="travel_categories">
+        <item>Beach Vacations</item>
+        <item>Mountain Retreats</item>
+        <item>City Escapes</item>
+        <item>Cultural Tours</item>
+        <item>Adventure Trips</item>
+        <item>Culinary Journeys</item>
+        <item>Wildlife Safaris</item>
+        <item>Historical Expeditions</item>
+        <item>Wellness &amp; Spa Retreats</item>
+        <item>Eco-Tourism</item>
+    </string-array>
+
+    <string-array name="transport_modes">
+        <item>Flight</item>
+        <item>Train</item>
+        <item>Bus</item>
+        <item>Car</item>
+        <item>Cruise</item>
+        <item>Walking Tour</item>
+        <item>Bicycle</item>
+        <item>Motorcycle</item>
+        <item>Ferry</item>
+        <item>Helicopter</item>
+    </string-array>
+
+    <string-array name="travel_tips">
+        <item>Always keep digital copies of important documents</item>
+        <item>Learn a few phrases in the local language</item>
+        <item>Notify your bank about your travel dates</item>
+        <item>Pack a basic first aid kit</item>
+        <item>Research local customs &amp; etiquette</item>
+        <item>Check if you need travel insurance</item>
+        <item>Download offline maps of your destination</item>
+        <item>Keep emergency contacts handy</item>
+        <item>Pack a universal power adapter</item>
+        <item>Take photos of your luggage contents</item>
+    </string-array>
+
+    <string-array name="multiline_items">
+        <item>First line\nSecond line</item>
+        <item>Item with\nmultiple\nnewlines</item>
+        <item>Another\nexample</item>
+    </string-array>
+
+    <!-- Plurals for quantity-dependent messages -->
+    <plurals name="notifications_count">
+        <item quantity="zero">No new notifications</item>
+        <item quantity="one">You have 1 new notification</item>
+        <item quantity="other">You have %d new notifications</item>
+    </plurals>
+
+    <plurals name="trip_days_remaining">
+        <item quantity="zero">Your trip starts today!</item>
+        <item quantity="one">1 day until your trip</item>
+        <item quantity="other">%d days until your trip</item>
+    </plurals>
+
+
+    <plurals name="places_nearby">
+        <item quantity="zero">No interesting places nearby</item>
+        <item quantity="one">1 interesting place within %d meter</item>
+        <item quantity="other">%1$d interesting places within %2$d meters</item>
+    </plurals>
+
+    <plurals name="reviews_count">
+        <item quantity="zero">No reviews yet. Be the first!</item>
+        <item quantity="one">%1$d review (%2$.1f stars)</item>
+        <item quantity="other">%1$d reviews (%2$.1f stars)</item>
+    </plurals>
+
+    <!-- Strings with special formatting needs -->
+    <string name="bullet_point">•</string>
+    <string name="copyright_notice">© 2025 Travel Buddy Pro, Inc.</string>
+    <string name="trademark">Travel Buddy Pro™ - All rights reserved</string>
+    <string name="registered">Travel Buddy® is a registered trademark</string>
+    <string name="degree_symbol">Current: 23°C | Feels like: 25°C</string>
+    <string name="currency_symbols">Accepted: $ € £ ¥</string>
+    <string name="math_symbols">Distance: d = √((x₂-x₁)² + (y₂-y₁)²)</string>
+    <string name="emoji_example">✈️ 🏨 🏖️ 🗺️ 🌍 🧳</string>
+
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Plurals for quantity-dependent messages -->
+    <plurals name="notifications_count">
+        <item quantity="zero">No new notifications</item>
+        <item quantity="one">You have 1 new notification</item>
+        <item quantity="other">You have %d new notifications</item>
+    </plurals>
+
+    <plurals name="trip_days_remaining">
+        <item quantity="zero">Your trip starts today!</item>
+        <item quantity="one">1 day until your trip</item>
+        <item quantity="other">%d days until your trip</item>
+    </plurals>
+
+    <plurals name="photos_saved">
+        <item quantity="one">1 photo saved to your collection</item>
+        <item quantity="other">%d photos saved to your collection</item>
+    </plurals>
+
+    <plurals name="destination_visits">
+        <item quantity="zero">You haven't visited %s yet</item>
+        <item quantity="one">You've visited %s once</item>
+        <item quantity="other">You've visited %s %d times</item>
+    </plurals>
+</resources>

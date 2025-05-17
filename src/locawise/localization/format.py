@@ -6,6 +6,7 @@ from locawise.errors import LocalizationFormatError
 class LocalizationFormat(Enum):
     PROPERTIES = "properties"
     JSON = 'json'
+    XML = 'xml'
 
 
 def detect_format(file_path: str) -> LocalizationFormat:
