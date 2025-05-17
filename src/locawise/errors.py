@@ -15,7 +15,7 @@ class TransientLLMApiError(Exception):
     pass
 
 
-class InvalidLLMOutputError(Exception):
+class InvalidLLMOutputError(TransientLLMApiError):
     pass
 
 
