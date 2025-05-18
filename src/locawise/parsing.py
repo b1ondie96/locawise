@@ -28,7 +28,6 @@ async def parse(file_path: str) -> dict[str, str]:
         logging.info(f'File not found {file_path}')
         raise e
     except Exception as e:
-        logging.exception(f"Unknown exception encountered while reading file. {file_path}")
         raise ParseError(f"Unknown exception while reading {file_path}") from e
 
     match localization_format:

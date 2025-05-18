@@ -2,7 +2,7 @@ import pytest
 from tenacity import wait_none
 
 from locawise import llm
-from locawise.errors import LocalizationError
+from locawise.errors import LocalizationError, LLMApiError
 from locawise.llm import LLMContext, LLMStrategy
 from locawise.localization import localize
 
@@ -61,7 +61,7 @@ async def test_localize_with_mock_strategy_and_llm_api_error(monkeypatch):
 
     monkeypatch.setattr(LLMStrategy.call.retry, "wait", wait_none())
 
-    with pytest.raises(LocalizationError):
+    with pytest.raises(ExceptionGroup):
         await localize(context, pairs, target_language, chunk_size=1)
 
 
@@ -82,5 +82,5 @@ async def test_localize_with_mock_strategy_and_invalid_llm_output_error(monkeypa
 
     monkeypatch.setattr(LLMStrategy.call.retry, "wait", wait_none())
 
-    with pytest.raises(LocalizationError):
+    with pytest.raises(ExceptionGroup):
         await localize(context, pairs, target_language, chunk_size=2)

@@ -30,7 +30,7 @@ async def read_lock_file(file_path: str) -> set[str]:
     except FileNotFoundError:
         logging.warning("Lock file not found. Ignore this if it's the first time you are running this application.")
     except (Exception,):
-        logging.exception("Unknown error while reading the lock file")
+        logging.warning(f"Unknown error while reading the lock file {file_path}")
     finally:
         return key_value_hashes
 

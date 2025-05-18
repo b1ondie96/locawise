@@ -47,19 +47,20 @@ async def main():
                                               context=config.context,
                                               tone=config.tone,
                                               glossary=config.glossary)
-    try:
-        async with asyncio.TaskGroup() as tg:
-            for target_lang_code in config.target_lang_codes:
-                logging.info(f'Creating task for {target_lang_code}')
-                target_file_name = generate_localization_file_name(target_lang_code, config.file_name_pattern)
-                target_path = os.path.join(config_directory, config.localization_root_path, target_file_name)
-                tg.create_task(processor.localize_to_target_language(target_path, target_lang_code))
 
-            tg.create_task(write_lock_file(lock_file_path, processor.source_dict))
-        logging.info('All tasks have finished.')
-    except* (Exception,):
-        logging.error("An error occurred. Localization has failed. Please retry.")
+    async with asyncio.TaskGroup() as tg:
+        for target_lang_code in config.target_lang_codes:
+            logging.info(f'Creating task for {target_lang_code}')
+            target_file_name = generate_localization_file_name(target_lang_code, config.file_name_pattern)
+            target_path = os.path.join(config_directory, config.localization_root_path, target_file_name)
+            tg.create_task(processor.localize_to_target_language(target_path, target_lang_code))
+
+        tg.create_task(write_lock_file(lock_file_path, processor.source_dict))
+    logging.info('All tasks have finished.')
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except (Exception,):
+        logging.exception("An unrecoverable error occurred.")

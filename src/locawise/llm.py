@@ -33,14 +33,9 @@ class LLMContext:
 
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         """
-        :raise InvalidLLMOutputError
         :raise LLMApiError
          """
-        try:
-            return await self.strategy.call(system_prompt, user_prompt)
-        except TransientLLMApiError:
-            logging.exception("TransientLLMApiError occurred")
-            raise
+        return await self.strategy.call(system_prompt, user_prompt)
 
 
 class MockLLMStrategy(LLMStrategy):
@@ -58,7 +53,6 @@ class MockLLMStrategy(LLMStrategy):
             pairs = json.loads(pairs_str)
             return {str(k): str(v) for k, v in pairs.items()}
         except json.JSONDecodeError:
-            logging.exception("Json could not be decoded.")
             return {}
 
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
@@ -101,12 +95,10 @@ class GeminiLLMStrategy(LLMStrategy):
             )
         except APIError as e:
             if e.code in _NON_RETRYABLE_ERROR_STATUS_CODES:
-                logging.exception("A non retryable GeminiAPI error occurred.")
                 raise LLMApiError
             else:
                 raise TransientLLMApiError
         except Exception as e:
-            logging.exception("An unknown GeminiAPI error occurred.")
             raise LLMApiError from e
 
         return _parse_json_text(response.text)
@@ -138,7 +130,6 @@ class OpenAiLLMStrategy(LLMStrategy):
             )
         except APIStatusError as e:
             if e.status_code in _NON_RETRYABLE_ERROR_STATUS_CODES:
-                logging.exception("A non-retryable APIStatusException exception occurred")
                 raise LLMApiError from e
             else:
                 logging.warning(f"Transient llm api error occurred. status={e.status_code}")
@@ -146,7 +137,6 @@ class OpenAiLLMStrategy(LLMStrategy):
         except OpenAIError as e:
             raise TransientLLMApiError from e
         except Exception as e:
-            logging.exception("An unknown exception occurred")
             raise LLMApiError from e
 
         return _parse_json_text(response.output_text)
@@ -167,10 +157,9 @@ def _parse_json_text(text: str) -> dict[str, str]:
             json_text: str = _extract_json_text(text)
         return json.loads(json_text)
     except Exception as e:
-        logging.exception(f"{text} could not be parsed into dictionary.")
-        logging.error('Invalid LLM output. This generally happens when you use a "dumber" LLM model or '
-                      'a model with low maximum output tokens. Please change '
-                      'the LLM model.')
+        logging.warning('Invalid LLM output. This generally happens when you use a "dumber" LLM model or '
+                        'a model with low maximum output tokens. Please change '
+                        'the LLM model.')
         raise InvalidLLMOutputError from e
 
 
