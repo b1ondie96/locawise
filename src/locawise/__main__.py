@@ -31,9 +31,15 @@ async def main():
 
     source_lang_file_name = generate_localization_file_name(config.source_lang_code, config.file_name_pattern)
     source_lang_file_path = os.path.join(config_directory, config.localization_root_path, source_lang_file_name)
-    if not os.path.exists(source_lang_file_path) and 'values-{language}' in config.file_name_pattern:
-        source_lang_file_path = os.path.join(config_directory, config.localization_root_path,
-                                             config.file_name_pattern.replace('values-{language}', 'values'))
+
+    if not os.path.exists(source_lang_file_path):
+        if 'values-{language}' in config.file_name_pattern:
+            source_lang_file_path = os.path.join(config_directory, config.localization_root_path,
+                                                 config.file_name_pattern.replace('values-{language}', 'values'))
+        elif 'messages' in config.file_name_pattern:
+            source_lang_file_path = os.path.join(config_directory, config.localization_root_path,
+                                                 config.file_name_pattern.replace('messages_{language}',
+                                                                                  'messages'))
 
     logging.info(f'Localizing {source_lang_file_path}')
 
