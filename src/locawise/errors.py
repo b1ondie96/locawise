@@ -11,7 +11,7 @@ class LLMApiError(Exception):
 
 
 # retryable
-class TransientLLMApiError(Exception):
+class TransientLLMApiError(LLMApiError):
     pass
 
 

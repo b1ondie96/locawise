@@ -27,8 +27,7 @@ async def serialize_and_save(key_value_pairs: dict[str, str], target_path: str):
     try:
         await write_to_file(file_path=target_path, content=content)
     except Exception as e:
-        logging.exception(f"Could not write content to target_path={target_path}")
-        raise FileSaveError("Could not write content to target_path") from e
+        raise FileSaveError(f"Could not write content to target_path={target_path}") from e
 
 
 def serialize(key_value_map: dict[str, str], localization_format: LocalizationFormat) -> str:
@@ -58,8 +57,7 @@ def serialize_to_properties_format(key_value_map: dict[str, str]) -> str:
             # Convert to string using the same encoding that was used for writing
             return binary_content.decode(encoding=encoding)
     except Exception as e:
-        logging.exception("Could not serialize to properties format")
-        raise SerializationError from e
+        raise SerializationError("Could not serialize to properties format") from e
 
 
 def serialize_to_json(key_value_map: dict[str, str]) -> str:

@@ -68,8 +68,7 @@ class SourceProcessor:
 
             missing_keys = self.source_dict.keys() - target_dict.keys()
             if missing_keys:
-                logging.error(f"There are missing keys: {missing_keys}")
-                raise LocalizationError("Found missing keys.")
+                raise LocalizationError(f"Found missing keys. {missing_keys}")
 
             ordered_target_dict = OrderedDict()
             for k, _ in self.source_dict.items():
