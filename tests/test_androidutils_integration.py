@@ -2,9 +2,9 @@ from collections import OrderedDict
 
 import pytest
 
-from locawise.androidutils import parse_xml_file, serialize_to_xml
+from locawise.androidutils import serialize_to_xml
 from locawise.errors import MalformedAndroidStringsXMLError
-from tests.utils import get_absolute_path
+from tests.utils import get_absolute_path, parse_xml_file
 
 _XML_DECLARATION = '<?xml version=\'1.0\' encoding=\'utf-8\'?>'
 
@@ -219,6 +219,42 @@ async def test_parse_xml_file_tree_with_mixed_children():
     assert actual == expected
 
 
+@pytest.mark.asyncio(loop_scope="module")
+async def test_parse_xml_file_tree_with_cdata_section():
+    test_file = get_absolute_path("resources/androidxml/strings_with_cdata.xml")
+
+    actual = await parse_xml_file(test_file)
+
+    expected = OrderedDict()
+
+    expected['html_link'] = '<![CDATA[<a href="#">Link</a>]]>'
+    expected['rich_text'] = '<![CDATA[Welcome to <b>TravelApp</b>! Use <i>filters</i> to find your perfect trip.]]>'
+    expected[
+        'terms_snippet'] = ('<![CDATA[By using this app, you agree to our'
+                            ' <a href="https://example.com/terms">Terms of Service</a>'
+                            ' and <a href="https://example.com/privacy">Privacy Policy</a>.'
+                            ' Your data is protected with <strong>256-bit encryption</strong>.'
+                            ' For support,'
+                            ' email us at <a href="mailto:support@travelapp.com">support@travelapp.com</a>.]]>')
+    assert actual == expected
+
+
+@pytest.mark.asyncio(loop_scope="module")
+async def test_parse_xml_file_tree_with_mixed_containing_cdata():
+    test_file = get_absolute_path("resources/androidxml/mixed_with_cdata.xml")
+
+    actual = await parse_xml_file(test_file)
+
+    expected = OrderedDict()
+
+    expected['html_link'] = '<![CDATA[<a href="#">Link</a>]]>'
+    expected['greeting'] = 'Hello World!'
+    expected['last_login'] = 'Your last login was invalid.'
+    expected['sample_cdata'] = '<![CDATA[hello world]]>'
+
+    assert actual == expected
+
+
 # should return empty resources when pairs are empty
 def test_serialize_to_xml_empty_pairs():
     pairs = {}
@@ -226,7 +262,7 @@ def test_serialize_to_xml_empty_pairs():
     actual = serialize_to_xml(pairs)
 
     expected = f"""{_XML_DECLARATION}
-<resources />"""
+<resources/>"""
     assert actual == expected
 
 
@@ -387,5 +423,39 @@ def test_serialize_to_xml_mixed():
     </plurals>
     <string name="contact_support">Contact Support</string>
     <string name="free_trial">Start Free Trial</string>
+</resources>"""
+    assert actual == expected
+
+
+def test_serialize_to_xml_cdata_section():
+    pairs = {
+        'html_link': '<![CDATA[<a href="#">Link</a>]]>',
+        'rich_text': '<![CDATA[Welcome to <b>TravelApp</b>! Use <i>filters</i> to find your perfect trip.]]>'
+    }
+
+    actual = serialize_to_xml(pairs)
+    expected = f"""{_XML_DECLARATION}
+<resources>
+    <string name="html_link"><![CDATA[<a href="#">Link</a>]]></string>
+    <string name="rich_text"><![CDATA[Welcome to <b>TravelApp</b>! Use <i>filters</i> to find your perfect trip.]]></string>
+</resources>"""
+    assert actual == expected
+
+
+def test_serialize_to_xml_mixed_with_cdata():
+    pairs = {
+        'html_link': '<![CDATA[<a href="#">Link</a>]]>',
+        'greeting': 'Hello World!',
+        'last_login': 'Your last login was invalid.',
+        'sample_cdata': '<![CDATA[hello world]]>'
+    }
+
+    actual = serialize_to_xml(pairs)
+    expected = f"""{_XML_DECLARATION}
+<resources>
+    <string name="html_link"><![CDATA[<a href="#">Link</a>]]></string>
+    <string name="greeting">Hello World!</string>
+    <string name="last_login">Your last login was invalid.</string>
+    <string name="sample_cdata"><![CDATA[hello world]]></string>
 </resources>"""
     assert actual == expected

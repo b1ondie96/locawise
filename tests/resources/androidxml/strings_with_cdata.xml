@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?PITarget PIContent?>
+<resources>
+    <!-- Very short CDATA -->
+    <string name="html_link"><![CDATA[<a href="#">Link</a>]]></string>
+
+    <!-- Short CDATA -->
+    <string name="rich_text"><![CDATA[Welcome to <b>TravelApp</b>! Use <i>filters</i> to find your perfect trip.]]></string>
+
+    <!-- Medium length CDATA -->
+    <string name="terms_snippet"><![CDATA[By using this app, you agree to our <a href="https://example.com/terms">Terms of Service</a> and <a href="https://example.com/privacy">Privacy Policy</a>. Your data is protected with <strong>256-bit encryption</strong>. For support, email us at <a href="mailto:support@travelapp.com">support@travelapp.com</a>.]]></string>
+
+</resources>

@@ -1,11 +1,10 @@
 import logging
 import re
-import xml.etree.ElementTree as ET
 from collections import namedtuple, OrderedDict
-from xml.etree.ElementTree import Element
+
+from lxml import etree
 
 from locawise.errors import MalformedAndroidStringsXMLError
-from locawise.fileutils import read_file
 
 _RESOURCES_TAG: str = 'resources'
 _STRING_TAG: str = 'string'
@@ -19,19 +18,15 @@ _PLURALS_ITEM_SEPARATOR = '___'
 _TranslationPair = namedtuple('TranslationPair', ['key', 'value'])
 
 
-# Parsing XML #
-
-async def parse_xml_file(file_path: str) -> dict[str, str]:
-    content = await read_file(file_path)
-    return parse_xml_string(content)
-
-
 def parse_xml_string(file_content: str) -> dict[str, str]:
-    tree = ET.ElementTree(ET.fromstring(file_content))
+    file_content = file_content.encode("UTF-8")
+    parser = etree.XMLParser(encoding='UTF-8', remove_comments=True, strip_cdata=False)
+    content = etree.fromstring(file_content, parser=parser)
+    tree = etree.ElementTree(content)
     return _parse_xml_tree(tree)
 
 
-def _parse_xml_tree(tree: ET.ElementTree) -> dict[str, str]:
+def _parse_xml_tree(tree: etree.ElementTree) -> dict[str, str]:
     result: dict[str, str] = OrderedDict()
 
     root = tree.getroot()
@@ -58,7 +53,7 @@ def _parse_xml_tree(tree: ET.ElementTree) -> dict[str, str]:
     return result
 
 
-def _parse_string_node(node: Element) -> list[_TranslationPair]:
+def _parse_string_node(node) -> list[_TranslationPair]:
     tag = node.tag.lower()
     if tag != _STRING_TAG:
         raise ValueError(f"Expected tag: {_STRING_TAG} actual tag: {tag}")
@@ -73,7 +68,7 @@ def _parse_string_node(node: Element) -> list[_TranslationPair]:
     return [pair]
 
 
-def _parse_string_array_tree(node: Element) -> list[_TranslationPair]:
+def _parse_string_array_tree(node) -> list[_TranslationPair]:
     tag = node.tag.lower()
     if tag != _STRING_ARRAY_TAG:
         raise ValueError(f"Expected tag: {_STRING_ARRAY_TAG} actual tag: {tag}")
@@ -93,7 +88,7 @@ def _parse_string_array_tree(node: Element) -> list[_TranslationPair]:
     return translation_pairs
 
 
-def _parse_plurals_tree(node: Element) -> list[_TranslationPair]:
+def _parse_plurals_tree(node) -> list[_TranslationPair]:
     tag = node.tag.lower()
     if tag != _PLURALS_TAG:
         raise ValueError(f"Expected tag: {_PLURALS_TAG} actual tag: {tag}")
@@ -118,9 +113,9 @@ def _parse_plurals_tree(node: Element) -> list[_TranslationPair]:
     return translation_pairs
 
 
-def _extract_inner_content(node: Element) -> str:
+def _extract_inner_content(node) -> str:
     # Convert the entire element to string
-    xml_content = ET.tostring(node, encoding='unicode')
+    xml_content = etree.tostring(node, encoding='unicode')
     if '/>' in xml_content and '</' not in xml_content:
         return ''
     # Single regex with a capture group to extract the content
@@ -137,13 +132,14 @@ def _extract_inner_content(node: Element) -> str:
 # Building XML #
 def serialize_to_xml(pairs: dict[str, str]) -> str:
     tree = _build_xml_tree(pairs)
-    ET.indent(tree, space='    ')
-    return ET.tostring(tree, encoding='unicode', xml_declaration=True)
+    etree.indent(tree, space='    ')
+    _bytes = etree.tostring(tree, encoding='utf-8', xml_declaration=True)
+    return _bytes.decode('utf-8')
 
 
-def _build_xml_tree(pairs: dict[str, str]) -> Element:
-    root = ET.Element('resources')
-    plurals_and_string_arrays: dict[str, Element] = {}
+def _build_xml_tree(pairs: dict[str, str]):
+    root = etree.Element('resources')
+    plurals_and_string_arrays = {}
 
     for key, value in pairs.items():
         if _PLURALS_ITEM_SEPARATOR in key:
@@ -153,11 +149,11 @@ def _build_xml_tree(pairs: dict[str, str]) -> Element:
 
             plurals_element = plurals_and_string_arrays.get(plurals_name)
             if plurals_element is None:
-                plurals_element = ET.Element('plurals', {'name': plurals_name})
+                plurals_element = etree.Element('plurals', {'name': plurals_name})
                 root.append(plurals_element)
                 plurals_and_string_arrays[plurals_name] = plurals_element
 
-            item = ET.Element('item', attrib={'quantity': quantity})
+            item = etree.Element('item', attrib={'quantity': quantity})
             item.text = value
 
             plurals_element.append(item)
@@ -167,11 +163,11 @@ def _build_xml_tree(pairs: dict[str, str]) -> Element:
 
             array_element = plurals_and_string_arrays.get(array_name)
             if array_element is None:
-                array_element = ET.Element('string-array', attrib={'name': array_name})
+                array_element = etree.Element('string-array', attrib={'name': array_name})
                 root.append(array_element)
                 plurals_and_string_arrays[array_name] = array_element
 
-            item = ET.Element('item')
+            item = etree.Element('item')
             item.text = value
 
             array_element.append(item)
@@ -182,7 +178,19 @@ def _build_xml_tree(pairs: dict[str, str]) -> Element:
     return root
 
 
-def _create_string_element(key: str, value: str) -> Element:
-    element = ET.Element('string', attrib={'name': key})
-    element.text = value
+def _create_string_element(key: str, value: str):
+    element = etree.Element('string', attrib={'name': key})
+    if _is_cdata_section(value.strip()):
+        # If the value is a CDATA section, we need to handle it differently
+        cdata_value = value.strip()[9:-3]  # Remove <![CDATA[ and ]]>
+        element.text = etree.CDATA(cdata_value)
+    else:
+        element.text = value
     return element
+
+
+def _is_cdata_section(text: str) -> bool:
+    """
+    Check if the text is a CDATA section.
+    """
+    return text.startswith('<![CDATA[') and text.endswith(']]>')

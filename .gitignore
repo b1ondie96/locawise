@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 .idea
 
+resources/test
 resources/test/generated/
 
 **/.DS_Store
