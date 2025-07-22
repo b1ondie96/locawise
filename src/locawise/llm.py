@@ -12,7 +12,7 @@ from openai import APIStatusError, OpenAIError
 from tenacity import retry, stop_after_attempt, retry_if_exception_type, \
     wait_random_exponential
 
-from locawise.envutils import retrieve_openai_api_key
+from locawise.envutils import retrieve_openai_api_key,retrieve_google_api_key
 from locawise.errors import InvalidLLMOutputError, LLMApiError, TransientLLMApiError
 
 _NON_RETRYABLE_ERROR_STATUS_CODES = [400, 401, 403, 404, 409, 422]
@@ -83,12 +83,12 @@ class GeminiLLMStrategy(LLMStrategy):
         else:
             self.location = location
 
-        self.client = genai.Client(location=self.location)
+        self.client = genai.Client(api_key=retrieve_google_api_key())
 
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         config = self._create_config(system_prompt)
         try:
-            response = await self.client.models.generate_content(
+            response =  self.client.models.generate_content(
                 model=self.model,
                 contents=user_prompt,
                 config=config
