@@ -1,5 +1,6 @@
 import os
-
+def retrieve_google_api_key():
+    return os.environ.get('GOOGLE_AI_STUDIO_API_KEY')
 
 def retrieve_openai_api_key():
     return os.environ.get('OPENAI_API_KEY')
