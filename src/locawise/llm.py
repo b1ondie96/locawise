@@ -70,39 +70,45 @@ class MockLLMStrategy(LLMStrategy):
 
 
 class GeminiLLMStrategy(LLMStrategy):
-    def __init__(self, model: str | None = None, api_key: str | None = None):
+    def __init__(self, model: str | None = None, location: str | None = None):
         if not model:
-            self.model = 'gemini-2.5-pro'
+            self.model = 'gemini-2.5-flash'
         else:
             self.model = model
 
         self.temperature = 0
-        
-        # Configure Google AI Studio
-        genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel(self.model)
+
+        if not location:
+            self.location = 'europe-west1'
+        else:
+            self.location = location
+
+        self.client = genai.Client(location=self.location)
 
     async def call(self, system_prompt: str, user_prompt: str) -> dict[str, str]:
         config = self._create_config(system_prompt)
         try:
-            response = await self.model.generate_content_async(
-                prompt=user_prompt,
-                generation_config=config
+            response = await self.client.models.generate_content(
+                model=self.model,
+                contents=user_prompt,
+                config=config
             )
-        except Exception as e:
-            if hasattr(e, 'status_code') and e.status_code in _NON_RETRYABLE_ERROR_STATUS_CODES:
-                raise LLMApiError from e
+        except APIError as e:
+            if e.code in _NON_RETRYABLE_ERROR_STATUS_CODES:
+                raise LLMApiError
             else:
-                raise TransientLLMApiError from e
+                raise TransientLLMApiError
+        except Exception as e:
+            raise LLMApiError from e
 
         return _parse_json_text(response.text)
 
     def _create_config(self, system_prompt):
-        return genai.types.GenerationConfig(
-            temperature=self.temperature,
-            candidate_count=1,
-            max_output_tokens=2048
-        )
+        return types.GenerateContentConfig(temperature=self.temperature,
+                                           system_instruction=system_prompt,
+                                           automatic_function_calling=types.AutomaticFunctionCallingConfig(
+                                               disable=True))
+
 
 class OpenAiLLMStrategy(LLMStrategy):
     def __init__(self, model: str | None = None):
@@ -157,14 +163,14 @@ def _parse_json_text(text: str) -> dict[str, str]:
         raise InvalidLLMOutputError from e
 
 
-def create_strategy(model: str | None, api_key: str | None = None) -> LLMStrategy:
+def create_strategy(model: str | None, location: str | None) -> LLMStrategy:
     openai_key = retrieve_openai_api_key()
     if openai_key:
         return OpenAiLLMStrategy(model=model)
 
     try:
-        return GeminiLLMStrategy(model=model, api_key=api_key)
-    except Exception as e:
-        logging.error("No API key found for any supported LLM providers. Please add the necessary "
-                     "environment variables.")
-        raise ValueError('No API key found for LLM providers.') from e
+        return GeminiLLMStrategy(model=model, location=location)
+    except (Exception,):
+        logging.error("No environment variables found for any supported LLM providers. Please add the necessary "
+                      "environment variables.")
+        raise ValueError('No environment variables found for LLM providers.')
